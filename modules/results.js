@@ -161,7 +161,7 @@ function createModelInfoBox(calculations, params) {
     className: 'analysis-details',
     style: 'margin-top: 0.75rem; font-size: 0.8125rem;'
   });
-  formula.innerHTML = `<em>Formula: g = r - (D₁ / P₀)</em>`;
+  formula.innerHTML = `<em>Formula: g = r − (D₁ / P₀)</em>`;
   content.appendChild(formula);
   
   box.appendChild(content);

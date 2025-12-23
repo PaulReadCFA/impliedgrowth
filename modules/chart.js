@@ -172,40 +172,72 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         x: {
           title: {
             display: true,
-            text: 'Years'
+            text: 'Years',
+            color: '#1f2937',
+            font: {
+              weight: '600'
+            }
+          },
+          ticks: {
+            color: '#1f2937'
           },
           grid: {
             display: false
+          },
+          border: {
+            color: '#1f2937',
+            width: 2
           }
         },
         y: {
           title: {
             display: true,
-            text: 'Cash Flows ($)'
+            text: 'Cash Flows (USD)',
+            color: '#1f2937',
+            font: {
+              weight: '600'
+            }
           },
           position: 'left',
           ticks: {
             callback: function(value) {
-              return formatCurrency(value);
+              // Format without USD prefix since it's in the axis title
+              const absValue = Math.abs(value);
+              const formatted = absValue.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              });
+              return value < 0 ? `-${formatted}` : formatted;
             },
+            color: '#1f2937',
             autoSkip: true,
             maxRotation: 0,
             minRotation: 0
           },
           grid: {
             color: 'rgba(0, 0, 0, 0.05)'
+          },
+          border: {
+            color: '#1f2937',
+            width: 2
           }
         },
         y2: {
           title: {
-            display: false  // We'll draw it manually
+            display: true,
+            text: 'Growth Rate',
+            color: COLORS.growth,
+            font: {
+              weight: '600'
+            }
           },
           position: 'right',
           min: 0,
           max: growthRate ? Math.max(12, growthRate * 1.5) : 12,
           ticks: {
             callback: function(value) {
-              return formatPercentage(value, 1);
+              // Return just the number without % sign
+              return value.toFixed(1);
             },
             color: COLORS.growth,
             autoSkip: true,
@@ -214,6 +246,10 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
           },
           grid: {
             display: false
+          },
+          border: {
+            color: COLORS.growth,
+            width: 2
           }
         }
       },
@@ -221,31 +257,12 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         padding: {
           left: 10,
           right: 10,
-          top: showLabels ? 35 : 15,
+          top: showLabels ? 25 : 15,
           bottom: 10
         }
       }
     },
     plugins: [{
-      // Custom plugin to draw horizontal Y2 axis title
-      id: 'horizontalY2Title',
-      afterDraw: (chart) => {
-        const ctx = chart.ctx;
-        const chartArea = chart.chartArea;
-        
-        ctx.save();
-        ctx.fillStyle = COLORS.growth;
-        const fontSize = Math.max(11, Math.min(14, chartArea.width / 50));
-        ctx.font = `bold ${fontSize}px sans-serif`;
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'top';
-        
-        ctx.fillText('Growth Rate (%)', chartArea.right, chartArea.top - 25);
-        
-        ctx.restore();
-      }
-    },
-    {
       // Custom plugin to draw labels on top of stacked bars
       id: 'stackedBarLabels',
       afterDatasetsDraw: (chart) => {

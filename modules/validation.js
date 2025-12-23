@@ -14,14 +14,14 @@ const VALIDATION_RULES = {
     max: 500,
     required: true,
     label: 'Market price',
-    prefix: '$'
+    prefix: 'USD '
   },
   currentDividend: {
     min: 0,
     max: 50,
     required: true,
     label: 'Current dividend',
-    prefix: '$'
+    prefix: 'USD '
   },
   requiredReturn: {
     min: 0.01,
@@ -35,7 +35,7 @@ const VALIDATION_RULES = {
     max: 50,
     required: true,
     label: 'Expected next dividend',
-    prefix: '$'
+    prefix: 'USD '
   }
 };
 

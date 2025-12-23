@@ -28,7 +28,7 @@ export function renderDynamicEquation(calculations, params) {
   const p0Formatted = formatCurrency(marketPrice);
   
   // Build MathML equation
-  // g = r - (D₁ / P₀)
+  // g = r − (D₁ / P₀)
   const mathML = `
     <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
       <mrow>

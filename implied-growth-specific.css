@@ -17,7 +17,7 @@
 }
 
 /* ==========================================================================
-   2. RESULT BOXES – Implied Growth Specific
+   2. RESULT BOXES â€“ Implied Growth Specific
    ========================================================================== */
 .result-box.growth-rate {
   background-color: var(--color-bg-purple);
@@ -106,7 +106,7 @@
 }
 
 /* ==========================================================================
-   3. INPUT LAYOUT – Inline with Prefix/Suffix
+   3. INPUT LAYOUT â€“ Inline with Prefix/Suffix
    ========================================================================== */
 .input-group-inline {
   display: flex;
@@ -195,7 +195,7 @@
 }
 
 /* ==========================================================================
-   4. EQUATION DISPLAY – Implied Growth Specific
+   4. EQUATION DISPLAY â€“ Implied Growth Specific
    ========================================================================== */
 .equation-container {
   padding: 1rem;
