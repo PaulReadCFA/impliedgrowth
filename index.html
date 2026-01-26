@@ -10,6 +10,43 @@
   <link rel="stylesheet" href="cfa-base.css">
   <link rel="stylesheet" href="implied-growth-specific.css">
   
+  <!-- MathJax 2.7.7 for equation rendering -->
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        processEscapes: true
+      },
+      "HTML-CSS": {
+        scale: 100,
+        linebreaks: { automatic: true }
+      },
+      SVG: {
+        scale: 100,
+        linebreaks: { automatic: true }
+      },
+      CommonHTML: {
+        scale: 100,
+        linebreaks: { automatic: true }
+      },
+      menuSettings: {
+        inTabOrder: false
+      }
+    });
+    
+    // Remove tabindex from MathJax elements for a11y compliance
+    MathJax.Hub.Register.MessageHook("End Process", function (message) {
+      var elements = document.querySelectorAll('.MathJax, .MathJax_CHTML, .mjx-chtml, [id*="MathJax"]');
+      elements.forEach(function(el) {
+        el.removeAttribute('tabindex');
+      });
+    });
+  </script>
+  
   <!-- Chart.js for visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -17,21 +54,36 @@
   <div class="container">
     <!-- Skip Links for Accessibility -->
     <nav role="navigation" aria-label="Skip links">
-      <a href="#calculator" class="skip-link">Skip to calculator</a>
+      <a href="#data-entry" class="skip-link">Skip to data entry</a>
       <a href="#visualizer" class="skip-link">Skip to data table</a>
     </nav>
     
     <main class="content">
-      <!-- Card 1: Equation -->
-      <section id="equation-card" class="card">
+      <!-- Card 0: Static Equation -->
+      <section id="static-equation-card" class="card">
         <h4 class="card-title">Gordon Growth Model Equation</h4>
         <p class="equation-intro">
           This equation calculates the implied growth rate based on current market pricing.
         </p>
         
+        <!-- Static equation with color-coded variables -->
+        <div class="equation-container" role="region" aria-label="Gordon Growth Model formula" id="static-equation-container">
+          <div id="static-equation">
+            $$\color{#15803d}{g} = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{Div_{t+1}}}{\color{#b95b1d}{PV_t}} = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{Div_t(1+g)}}{\color{#b95b1d}{PV_t}}$$
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 1: Dynamic Equation -->
+      <section id="equation-card" class="card">
+        <h4 class="card-title">Your Calculation</h4>
+        <p class="equation-intro">
+          Using your values, the equation becomes:
+        </p>
+        
         <!-- Dynamic equation with actual values -->
         <div class="equation-container" role="region" aria-label="Gordon Growth Model with your values" aria-live="polite" id="dynamic-equation-container">
-          <div id="dynamic-mathml-equation">
+          <div id="dynamic-equation">
             <!-- Populated by JavaScript -->
           </div>
         </div>
@@ -42,7 +94,7 @@
         <h4 class="card-title">Implied Growth Rate Calculator</h4>
         <div class="card-content">
           <!-- Input controls -->
-          <div class="input-section">
+          <div class="input-section" id="data-entry" tabindex="-1">
             <p class="sr-only" id="inputHelp">
               Enter values and the calculator updates results and the chart automatically.
             </p>
@@ -50,7 +102,7 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="market-price" class="input-label-inline">
-                  Market price <span style="color: var(--color-growth-negative);">(P₀)</span>:
+                  Market price <span style="color: #b95b1d;">(PV<sub>t</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -64,7 +116,7 @@
 
               <div class="input-inline">
                 <label for="current-dividend" class="input-label-inline">
-                  Current dividend <span style="color: var(--color-growth-dividend);">(D₀)</span>:
+                  Current dividend <span style="color: #3c6ae5;">(Div<sub>t</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -78,7 +130,7 @@
 
               <div class="input-inline">
                 <label for="required-return" class="input-label-inline">
-                  Required return <span style="color: var(--color-teal-data);">(r)</span>:
+                  Required return <span style="color: #7a46ff;">(r)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
@@ -92,7 +144,7 @@
 
               <div class="input-inline">
                 <label for="expected-dividend" class="input-label-inline">
-                  Expected next dividend <span style="color: var(--color-growth-dividend);">(D₁)</span>:
+                  Expected next dividend <span style="color: #3c6ae5;">(Div<sub>t+1</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -122,16 +174,16 @@
           <div class="view-controls">
             <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
               <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: var(--color-growth-negative);"></span>
-                Initial investment <span style="color: var(--color-growth-negative);">(P₀)</span>
+                <span class="legend-color" style="background-color: #b95b1d;"></span>
+                Initial investment <span style="color: #b95b1d;">(PV<sub>t</sub>)</span>
               </span>
               <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: var(--color-growth-dividend);"></span>
-                Dividend cash flow <span style="color: var(--color-growth-dividend);">(D)</span>
+                <span class="legend-color" style="background-color: #3c6ae5;"></span>
+                Dividend cash flow <span style="color: #3c6ae5;">(Div)</span>
               </span>
               <span class="legend-item" role="listitem">
-                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed var(--color-purple-bold); background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Growth rate <span style="color: var(--color-purple-bold);">(g)</span>
+                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
+                Growth rate <span style="color: #15803d;">(g)</span>
               </span>
             </div>
             
@@ -155,7 +207,7 @@
               This chart displays the projected dividend cash flows over 10 years using the implied growth rate.
               At year 0, the initial stock purchase price is shown as a negative cash flow (money paid out).
               Then, at each subsequent year, dividend payments grow at the calculated implied growth rate.
-              The dashed purple line shows the constant growth rate percentage on the right axis.
+              The dashed green line shows the growth rate percentage on the right axis.
             </p>
             <p>
               Keyboard navigation: Tab to focus the chart. Use Left and Right arrow keys to move between years.
@@ -178,12 +230,9 @@
                role="region"  
                aria-label="Dividend growth projection table"  
                tabindex="-1">
-            <table id="cash-flow-table" class="data-table" aria-describedby="table-note" tabindex="0">
+            <table id="cash-flow-table" class="data-table" tabindex="0">
               <!-- Populated by JavaScript -->
             </table>
-            <p id="table-note" class="table-note">
-              Note: Values in parentheses indicate negative cash flows (outflows). Hover over values to see calculations. Press <kbd>Escape</kbd> to exit table navigation.
-            </p>
           </div>
         </div>
       </section>

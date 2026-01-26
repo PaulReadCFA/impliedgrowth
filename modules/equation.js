@@ -1,6 +1,6 @@
 /**
  * Dynamic Equation Module
- * Renders Gordon Growth Model equation with actual calculated values
+ * Renders Gordon Growth Model equation with actual calculated values using MathJax
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
@@ -11,7 +11,7 @@ import { formatCurrency, formatPercentage } from './utils.js';
  * @param {Object} params - Input parameters
  */
 export function renderDynamicEquation(calculations, params) {
-  const container = document.getElementById('dynamic-mathml-equation');
+  const container = document.getElementById('dynamic-equation');
   
   if (!container) {
     console.error('Dynamic equation container not found');
@@ -27,50 +27,32 @@ export function renderDynamicEquation(calculations, params) {
   const d1Formatted = formatCurrency(expectedDividend);
   const p0Formatted = formatCurrency(marketPrice);
   
-  // Build MathML equation
-  // g = r − (D₁ / P₀)
-  const mathML = `
-    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-      <mrow>
-        <msub>
-          <mi mathcolor="#7a46ff">g</mi>
-          <mtext mathcolor="#7a46ff">implied</mtext>
-        </msub>
-        <mo>=</mo>
-        <msub>
-          <mi mathcolor="#0079a6">r</mi>
-          <mtext mathcolor="#0079a6">required</mtext>
-        </msub>
-        <mo>−</mo>
-        <mfrac linethickness="1.2px">
-          <msub>
-            <mi mathvariant="bold" mathcolor="#15803d">D</mi>
-            <mn mathcolor="#15803d">1</mn>
-          </msub>
-          <msub>
-            <mi mathvariant="bold" mathcolor="#b95b1d">P</mi>
-            <mn mathcolor="#b95b1d">0</mn>
-          </msub>
-        </mfrac>
-        <mo>=</mo>
-        <mtext mathcolor="#0079a6">${rFormatted}</mtext>
-        <mo>−</mo>
-        <mfrac linethickness="1.2px">
-          <mtext mathvariant="bold" mathcolor="#15803d">${d1Formatted}</mtext>
-          <mtext mathvariant="bold" mathcolor="#b95b1d">${p0Formatted}</mtext>
-        </mfrac>
-        <mo>=</mo>
-        <mtext mathcolor="#7a46ff" mathvariant="bold">${gFormatted}</mtext>
-      </mrow>
-    </math>
-  `;
+  // Build LaTeX equation using color scheme:
+  // Green #15803d for g (growth rate)
+  // Purple #7a46ff for r (required return)
+  // Blue #3c6ae5 for dividends
+  // Orange #b95b1d for price
   
-  container.innerHTML = mathML;
+  // Escape special characters in formatted values
+  const rClean = rFormatted.replace('%', '\\%');
+  const gClean = gFormatted.replace('%', '\\%');
+  const d1Clean = d1Formatted.replace('USD', '\\text{USD}');
+  const p0Clean = p0Formatted.replace('USD', '\\text{USD}');
+  
+  // Simplified equation: g_implied = calculation with values only
+  const latex = `\\color{#15803d}{g_{\\text{implied}}} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${d1Clean}}}{\\color{#b95b1d}{${p0Clean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  
+  container.textContent = '$$' + latex + '$$';
+  
+  // Trigger MathJax to render the equation
+  if (window.MathJax && window.MathJax.Hub) {
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, container]);
+  }
   
   // Create screen-reader friendly announcement
   const announcement = `Implied growth rate equals ${gFormatted}. ` +
     `Calculated as: required return ${rFormatted} ` +
-    `minus next year's dividend ${d1Formatted} divided by current market price ${p0Formatted}.`;
+    `minus next dividend (Div sub t+1) ${d1Formatted} divided by current market price (PV sub t) ${p0Formatted}.`;
   
   // Update aria-live region for screen readers
   let liveRegion = document.getElementById('equation-live-region');

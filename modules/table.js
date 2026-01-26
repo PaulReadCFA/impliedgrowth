@@ -22,15 +22,15 @@ export function renderTable(cashFlows, growthRate) {
   let html = `
     <caption class="sr-only">
       Dividend growth projection schedule showing year, growth rate, dividend payment,
-      investment, and total cash flows. Note: Values in parentheses indicate negative cash flows.
+      investment, and total cash flows.
     </caption>
 
     <thead>
       <tr>
         <th scope="col" class="text-left">Year</th>
-        <th scope="col" class="text-right">Growth Rate <span style="color: #7a46ff;">(g)</span></th>
-        <th scope="col" class="text-right">Dividend <span style="color: #15803d;">(D)</span></th>
-        <th scope="col" class="text-right">Investment <span style="color: #b95b1d;">(P₀)</span></th>
+        <th scope="col" class="text-right">Growth Rate <span style="color: #15803d;">(g)</span></th>
+        <th scope="col" class="text-right">Dividend <span style="color: #3c6ae5;">(Div)</span></th>
+        <th scope="col" class="text-right">Investment <span style="color: #b95b1d;">(PV<sub>t</sub>)</span></th>
         <th scope="col" class="text-right">Total Cash Flow</th>
         <th scope="col" class="text-right">Cumulative</th>
       </tr>
@@ -45,11 +45,11 @@ export function renderTable(cashFlows, growthRate) {
     html += `
       <tr>
         <td class="text-left">${cf.year}</td>
-        <td class="text-right" style="color: #7a46ff;" data-tooltip="Constant implied growth rate" tabindex="0">${formatPercentage(growthRate)}</td>
-        <td class="text-right" style="color: #15803d;" data-tooltip="${isInitial ? 'No dividend in year 0' : 'Dividend = D₀ × (1 + g)^' + cf.year}" tabindex="0">${formatCurrency(cf.dividend)}</td>
-        <td class="text-right" style="color: #b95b1d;" data-tooltip="${isInitial ? 'Initial stock purchase price (negative cash flow)' : 'No additional investment after year 0'}" tabindex="0">${formatCurrency(cf.investment)}</td>
-        <td class="text-right" tabindex="0" data-tooltip="${isInitial ? 'Initial investment paid' : 'Dividend received'} = ${formatCurrency(cf.totalCashFlow)}"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
-        <td class="text-right" tabindex="0" data-tooltip="Running total of all cash flows"><strong>${formatCurrency(cf.cumulativeCashFlow)}</strong></td>
+        <td class="text-right" style="color: #15803d;">${formatPercentage(growthRate)}</td>
+        <td class="text-right" style="color: #3c6ae5;">${formatCurrency(cf.dividend)}</td>
+        <td class="text-right" style="color: #b95b1d;">${formatCurrency(cf.investment)}</td>
+        <td class="text-right"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
+        <td class="text-right"><strong>${formatCurrency(cf.cumulativeCashFlow)}</strong></td>
       </tr>`;
   });
 
@@ -61,40 +61,8 @@ export function renderTable(cashFlows, growthRate) {
   table.innerHTML = html;
 
   // Add accessibility attributes
-  table.setAttribute('aria-label', 'Dividend growth projection table. Press Escape to exit table.');
+  table.setAttribute('aria-label', 'Dividend growth projection table.');
 
   // Announce to screen-reader users
   announceToScreenReader('Table view loaded with dividend projections.');
-  
-  // Add keyboard navigation to escape the table
-  setupTableKeyboardEscape();
-}
-
-/**
- * Set up Escape key to exit table and move to next section
- */
-function setupTableKeyboardEscape() {
-  const table = document.getElementById('cash-flow-table');
-  
-  if (!table) return;
-  
-  // Remove old listener if exists
-  if (table._escapeListener) {
-    table.removeEventListener('keydown', table._escapeListener);
-  }
-  
-  const escapeListener = (e) => {
-    // Press Escape to jump out of table to calculator section
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      const calculator = document.getElementById('calculator');
-      if (calculator) {
-        calculator.focus();
-        announceToScreenReader('Exited table, moved to calculator section');
-      }
-    }
-  };
-  
-  table._escapeListener = escapeListener;
-  table.addEventListener('keydown', escapeListener);
 }

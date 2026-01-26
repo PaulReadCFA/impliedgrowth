@@ -66,7 +66,25 @@ function init() {
  * Set up skip link handlers for accessibility
  */
 function setupSkipLinks() {
+  const skipToDataEntry = document.querySelector('a[href="#data-entry"]');
   const skipToVisualizer = document.querySelector('a[href="#visualizer"]');
+  
+  if (skipToDataEntry) {
+    listen(skipToDataEntry, 'click', (e) => {
+      e.preventDefault();
+      
+      // Focus the first input field
+      const firstInput = $('#market-price');
+      if (firstInput) {
+        firstInput.focus();
+        // Scroll into view
+        const dataEntry = $('#data-entry');
+        if (dataEntry) {
+          dataEntry.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  }
   
   if (skipToVisualizer) {
     listen(skipToVisualizer, 'click', (e) => {
@@ -190,7 +208,7 @@ function updateCalculations() {
 // =============================================================================
 
 /**
- * Set up chart/table view toggle
+ * Set up chart/table view toggle with arrow key navigation
  */
 function setupViewToggle() {
   const chartBtn = $('#chart-view-btn');
@@ -201,15 +219,42 @@ function setupViewToggle() {
     return;
   }
   
-  listen(chartBtn, 'click', () => switchView('chart'));
-  listen(tableBtn, 'click', () => switchView('table'));
+  // Click handlers
+  listen(chartBtn, 'click', () => {
+    switchView('chart', true); // true = move focus to chart
+  });
+  
+  listen(tableBtn, 'click', () => {
+    switchView('table', true); // true = move focus to table
+  });
+  
+  // Arrow key navigation between buttons
+  const handleArrowKeys = (e, currentBtn, nextBtn, view) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      // Switch view
+      switchView(view, false); // false = don't move focus, stay on buttons
+      // Focus the other button
+      nextBtn.focus();
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // Switch view and move focus
+      switchView(view, true);
+    }
+  };
+  
+  // When on chart button, arrow switches to table view
+  // When on table button, arrow switches to chart view
+  listen(chartBtn, 'keydown', (e) => handleArrowKeys(e, chartBtn, tableBtn, 'table'));
+  listen(tableBtn, 'keydown', (e) => handleArrowKeys(e, tableBtn, chartBtn, 'chart'));
 }
 
 /**
  * Switch between chart and table views
  * @param {string} view - 'chart' or 'table'
+ * @param {boolean} moveFocus - Whether to move focus to the view
  */
-function switchView(view) {
+function switchView(view, moveFocus = false) {
   const chartBtn = $('#chart-view-btn');
   const tableBtn = $('#table-view-btn');
   const chartContainer = $('#chart-container');
@@ -234,8 +279,15 @@ function switchView(view) {
     // Announce change
     announceToScreenReader('Chart view active');
     
-    // Focus chart container
-    focusElement(chartContainer, 100);
+    // Move focus if requested
+    if (moveFocus) {
+      const canvas = $('#growth-chart');
+      if (canvas) {
+        focusElement(canvas, 100);
+        // Set focus on first bar
+        currentFocusIndex = 0;
+      }
+    }
     
   } else {
     tableBtn.classList.add('active');
@@ -251,8 +303,13 @@ function switchView(view) {
     // Announce change
     announceToScreenReader('Table view active');
     
-    // Focus table
-    focusElement($('#cash-flow-table'), 100);
+    // Move focus if requested
+    if (moveFocus) {
+      const table = $('#cash-flow-table');
+      if (table) {
+        focusElement(table, 100);
+      }
+    }
   }
 }
 

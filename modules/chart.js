@@ -1,15 +1,22 @@
 /**
  * Chart Module
  * Chart rendering using Chart.js with keyboard accessibility
+ * 
+ * Unified Color Scheme:
+ * - Orange #b95b1d: Present Value/Current Price (P₀)
+ * - Blue #3c6ae5: Periodic Payments (Dividends)
+ * - Purple #7a46ff: Rate of Return (r)
+ * - Green #15803d: Growth Rates (g)
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
 
-// Implied Growth Colors (matching CSS variables)
+// Unified color scheme
 const COLORS = {
-  dividend: '#15803d',    // Green - matches --color-growth-dividend
-  negative: '#b95b1d',    // Orange - matches --color-growth-negative
-  growth: '#7a46ff',      // Purple - matches --color-growth-rate
+  price: '#b95b1d',       // Orange - Market price (P₀)
+  dividend: '#3c6ae5',    // Blue - Dividends (D)
+  return: '#7a46ff',      // Purple - Required return (r)
+  growth: '#15803d',      // Green - Growth rate (g)
   darkText: '#06005a'
 };
 
@@ -52,6 +59,10 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
   // Calculate total for labels
   const totalData = cashFlows.map(cf => cf.totalCashFlow);
   
+  // Get required return from first cash flow (it's constant)
+  const requiredReturn = growthRate !== null ? 
+    parseFloat((dividendData[1] / cashFlows[1].totalCashFlow * 100 + growthRate).toFixed(2)) : 7.40;
+  
   // Destroy existing chart instance
   if (chartInstance) {
     chartInstance.destroy();
@@ -69,7 +80,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         {
           label: 'Initial investment',
           data: investmentData,
-          backgroundColor: COLORS.negative,
+          backgroundColor: COLORS.price,
           borderWidth: 0,
           stack: 'cashflow',
           yAxisID: 'y',
@@ -85,7 +96,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
           order: 1
         },
         // Growth rate horizontal line
-        ...(growthRate !== null ? [{
+        {
           label: 'Growth rate (g)',
           data: labels.map(() => growthRate),
           type: 'line',
@@ -97,7 +108,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
           fill: false,
           yAxisID: 'y2',
           order: 0
-        }] : [])
+        }
       ]
     },
     options: {
@@ -143,7 +154,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
               
               // For year 0, show "Initial investment"
               if (isInitialYear && context.dataset.label === 'Initial investment') {
-                return `Initial investment (P₀): ${formatCurrency(value, true)}`;
+                return `Initial investment (PV_t): ${formatCurrency(value, true)}`;
               }
               
               // Regular labels
@@ -151,7 +162,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
                 return `Initial investment: ${formatCurrency(value, true)}`;
               }
               if (context.dataset.label === 'Dividend cash flow') {
-                return `Dividend (D): ${formatCurrency(value, true)}`;
+                return `Dividend (Div): ${formatCurrency(value, true)}`;
               }
               
               return `${context.dataset.label}: ${formatCurrency(value, true)}`;
@@ -207,7 +218,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
               });
-              return value < 0 ? `-${formatted}` : formatted;
+              return value < 0 ? `−${formatted}` : formatted;
             },
             color: '#1f2937',
             autoSkip: true,
@@ -257,7 +268,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         padding: {
           left: 10,
           right: 10,
-          top: showLabels ? 25 : 15,
+          top: showLabels ? 35 : 25, // Extra space for r label
           bottom: 10
         }
       }
@@ -312,6 +323,55 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
       }
     },
     {
+      // Custom plugin to draw "g = X.XX%" label
+      id: 'gLabel',
+      afterDatasetsDraw: (chart) => {
+        if (!showLabels) return;
+        
+        const ctx = chart.ctx;
+        const meta = chart.getDatasetMeta(2); // Growth rate line dataset
+        
+        if (!meta.data || meta.data.length === 0) return;
+        
+        // Get chart dimensions
+        const chartWidth = chart.width;
+        const chartArea = chart.chartArea;
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        
+        ctx.save();
+        ctx.font = '600 12px sans-serif';
+        
+        // Draw g label (growth rate) - centered
+        const gLabelText = `g = ${growthRate.toFixed(2)}%`;
+        const gTextWidth = ctx.measureText(gLabelText).width;
+        const padding = 6;
+        const boxWidth = gTextWidth + padding * 2;
+        const boxHeight = 20;
+        
+        // Position g label at center of the line
+        const gPoint = meta.data[Math.floor(meta.data.length / 2)];
+        const gBoxX = centerX - boxWidth / 2;
+        const gBoxY = gPoint.y - boxHeight - 8;
+        
+        // White background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(gBoxX, gBoxY, boxWidth, boxHeight);
+        
+        // Green border
+        ctx.strokeStyle = COLORS.growth;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(gBoxX, gBoxY, boxWidth, boxHeight);
+        
+        // Green text
+        ctx.fillStyle = COLORS.growth;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(gLabelText, centerX, gBoxY + boxHeight / 2);
+        
+        ctx.restore();
+      }
+    },
+    {
       // Keyboard focus highlight plugin
       id: 'keyboardFocus',
       afterDatasetsDraw: (chart) => {
@@ -347,13 +407,13 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
   });
   
   // Add keyboard navigation
-  setupKeyboardNavigation(canvas, cashFlows, totalData, growthRate);
+  setupKeyboardNavigation(canvas, cashFlows, totalData, growthRate, requiredReturn);
 }
 
 /**
  * Setup keyboard navigation for the chart
  */
-function setupKeyboardNavigation(canvas, cashFlows, totalData, growthRate) {
+function setupKeyboardNavigation(canvas, cashFlows, totalData, growthRate, requiredReturn) {
   const oldListener = canvas._keydownListener;
   if (oldListener) {
     canvas.removeEventListener('keydown', oldListener);
@@ -460,12 +520,12 @@ function announceDataPoint(cashFlow, total, growthRate) {
   }
   
   const isInitialYear = cashFlow.year === 0;
-  const investmentLabel = isInitialYear ? 'Initial investment (P₀)' : 'No investment';
+  const investmentLabel = isInitialYear ? 'Initial investment (PV_t)' : 'No investment';
   
   const announcement = `Year ${cashFlow.year}. ` +
     `Growth rate (g): ${growthRate ? formatPercentage(growthRate) : '0%'}. ` +
     `${investmentLabel}: ${formatCurrency(cashFlow.investment, true)}. ` +
-    `Dividend (D): ${formatCurrency(cashFlow.dividend, true)}. ` +
+    `Dividend (Div): ${formatCurrency(cashFlow.dividend, true)}. ` +
     `Total: ${formatCurrency(total, true)}.`;
   
   liveRegion.textContent = announcement;

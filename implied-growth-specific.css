@@ -6,22 +6,28 @@
 
 /* ==========================================================================
    1. IMPLIED GROWTH SPECIFIC COLOR ASSIGNMENTS
+   Unified color scheme across all calculators:
+   - Orange #b95b1d: Present Value/Current Price (P₀)
+   - Blue #3c6ae5: Periodic Payments (Dividends)
+   - Purple #7a46ff: Rate of Return (r)
+   - Green #15803d: Growth Rates (g)
+   - Teal #0079a6: Future Value
    ========================================================================== */
 :root {
   /* Implied Growth Calculator Specific Colors */
-  --color-growth-rate: var(--color-purple-bold);        /* #7a46ff - Growth rate */
-  --color-growth-dividend: var(--color-green-data);     /* #15803d - Dividend payments */
-  --color-growth-negative: var(--color-orange-deep);    /* #b95b1d - Initial investment */
-  --color-growth-return: var(--color-teal-data);        /* #0079a6 - Required return */
-  --color-growth-price: var(--color-blue-interactive);  /* #3c6ae5 - Market price */
+  --color-growth-price: var(--color-orange-deep);       /* #b95b1d - Market price (P₀) */
+  --color-growth-dividend: var(--color-blue-interactive); /* #3c6ae5 - Dividend payments (D) */
+  --color-growth-return: var(--color-purple-bold);      /* #7a46ff - Required return (r) */
+  --color-growth-rate: var(--color-green-data);         /* #15803d - Growth rate (g) */
+  --color-growth-future: var(--color-teal-data);        /* #0079a6 - Future value */
 }
 
 /* ==========================================================================
-   2. RESULT BOXES â€“ Implied Growth Specific
+   2. RESULT BOXES — Implied Growth Specific
    ========================================================================== */
 .result-box.growth-rate {
-  background-color: var(--color-bg-purple);
-  border-color: var(--color-purple-bold);
+  background-color: var(--color-bg-green);
+  border-color: var(--color-green-data);
 }
 
 .result-box.consistency {
@@ -30,14 +36,14 @@
 }
 
 .result-box.model-info {
-  background-color: var(--color-bg-blue);
-  border-color: var(--color-blue-interactive);
+  background-color: var(--color-bg-purple);
+  border-color: var(--color-purple-bold);
 }
 
 .result-title.growth-rate {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--color-purple-bold);
+  color: var(--color-green-data);
 }
 
 .result-title.consistency {
@@ -45,11 +51,11 @@
 }
 
 .result-title.model-info {
-  color: var(--color-blue-interactive);
+  color: var(--color-purple-bold);
 }
 
 .result-value {
-  color: var(--color-purple-bold);
+  color: var(--color-green-data);
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
@@ -106,7 +112,7 @@
 }
 
 /* ==========================================================================
-   3. INPUT LAYOUT â€“ Inline with Prefix/Suffix
+   3. INPUT LAYOUT — Inline with Prefix/Suffix
    ========================================================================== */
 .input-group-inline {
   display: flex;
@@ -195,7 +201,7 @@
 }
 
 /* ==========================================================================
-   4. EQUATION DISPLAY â€“ Implied Growth Specific
+   4. EQUATION DISPLAY — Implied Growth Specific
    ========================================================================== */
 .equation-container {
   padding: 1rem;
@@ -209,6 +215,7 @@
   -webkit-overflow-scrolling: touch;
   container-type: inline-size;
   container-name: equation;
+  text-align: center; /* Center equations */
 }
 
 /* Responsive equation scaling */
@@ -239,7 +246,11 @@
   }
 }
 
-/* MathML styling */
+/* MathJax styling */
+.MathJax, .MathJax_Display {
+  text-align: center !important;
+}
+
 math {
   font-size: 1.125rem;
   font-weight: 600;
@@ -248,89 +259,21 @@ math {
 }
 
 /* Dynamic equation - slightly smaller */
-#dynamic-equation-container math {
+#dynamic-equation-container math,
+#dynamic-equation-container .MathJax {
   font-size: 1rem;
   color: var(--color-gray-700);
 }
 
-/* Dynamic equation responsive scaling */
-@media (max-width: 900px) {
-  #dynamic-equation-container math {
-    font-size: 0.9em;
-  }
+/* Static equation styling */
+#static-equation-container {
+  text-align: center;
 }
 
-@media (max-width: 768px) {
-  #dynamic-equation-container math {
-    font-size: 0.8em;
-  }
-}
-
-@media (max-width: 640px) {
-  #dynamic-equation-container math {
-    font-size: 0.7em;
-  }
-}
-
-@media (max-width: 480px) {
-  #dynamic-equation-container math {
-    font-size: 0.6em;
-  }
-}
-
-@media (max-width: 400px) {
-  #dynamic-equation-container math {
-    font-size: 0.55em;
-  }
-}
-
-@media (max-width: 360px) {
-  #dynamic-equation-container math {
-    font-size: 0.5em;
-  }
-}
-
-/* Container queries for zoom support */
-@container equation (max-width: 700px) {
-  #dynamic-equation-container math {
-    font-size: 0.85em;
-  }
-}
-
-@container equation (max-width: 600px) {
-  #dynamic-equation-container math {
-    font-size: 0.75em;
-  }
-}
-
-@container equation (max-width: 500px) {
-  #dynamic-equation-container math {
-    font-size: 0.65em;
-  }
-}
-
-@container equation (max-width: 400px) {
-  #dynamic-equation-container math {
-    font-size: 0.55em;
-  }
-}
-
-@container equation (max-width: 320px) {
-  #dynamic-equation-container math {
-    font-size: 0.5em;
-  }
-}
-
-math msub mtext {
-  font-size: 0.75em;
-}
-
-math mfrac {
-  margin: 0 0.2em;
-}
-
-math mo {
-  margin: 0 0.1em;
+#static-equation-container math,
+#static-equation-container .MathJax {
+  font-size: 1.125rem;
+  color: var(--color-gray-800);
 }
 
 /* ==========================================================================
@@ -339,6 +282,20 @@ math mo {
 .chart-a11y-overlay .chart-point:focus-visible {
   outline: 2px solid var(--color-blue-interactive);
   outline-offset: 2px;
+}
+
+/* Chart label for required return line */
+.chart-r-label {
+  position: absolute;
+  background: white;
+  border: 2px solid var(--color-purple-bold);
+  color: var(--color-purple-bold);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 30;
 }
 
 /* ==========================================================================

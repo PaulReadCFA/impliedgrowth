@@ -98,15 +98,15 @@ function createConsistencyBox(calculations, params) {
   const warning = createElement('div', { className: 'consistency-warning' });
   
   const warningTitle = createElement('div', { className: 'consistency-warning-title' },
-    'Note: D₁ values differ'
+    'Note: Div_t+1 values differ'
   );
   warning.appendChild(warningTitle);
   
   const details = createElement('div', { className: 'consistency-details' });
   details.innerHTML = `
-    Expected D₁: ${formatCurrency(params.expectedDividend)}<br>
-    Calculated D₁: ${formatCurrency(calculations.calculatedD1)}<br>
-    <small>(Based on D₀ × (1 + g))</small>
+    Expected Div<sub>t+1</sub>: ${formatCurrency(params.expectedDividend)}<br>
+    Calculated Div<sub>t+1</sub>: ${formatCurrency(calculations.calculatedD1)}<br>
+    <small>(Based on Div<sub>t</sub> × (1 + g))</small>
   `;
   warning.appendChild(details);
   
@@ -161,7 +161,7 @@ function createModelInfoBox(calculations, params) {
     className: 'analysis-details',
     style: 'margin-top: 0.75rem; font-size: 0.8125rem;'
   });
-  formula.innerHTML = `<em>Formula: g = r − (D₁ / P₀)</em>`;
+  formula.innerHTML = `<em>Formula: g = r − (Div<sub>t+1</sub> / PV<sub>t</sub>)</em>`;
   content.appendChild(formula);
   
   box.appendChild(content);
