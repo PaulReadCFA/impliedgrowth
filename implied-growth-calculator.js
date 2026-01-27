@@ -121,8 +121,7 @@ function setupInputListeners() {
   const inputs = [
     { id: 'market-price', field: 'marketPrice' },
     { id: 'current-dividend', field: 'currentDividend' },
-    { id: 'required-return', field: 'requiredReturn' },
-    { id: 'expected-dividend', field: 'expectedDividend' }
+    { id: 'required-return', field: 'requiredReturn' }
   ];
   
   inputs.forEach(({ id, field }) => {
@@ -168,7 +167,7 @@ function setupInputListeners() {
  * Update growth calculations based on current state
  */
 function updateCalculations() {
-  const { marketPrice, currentDividend, requiredReturn, expectedDividend, errors } = state;
+  const { marketPrice, currentDividend, requiredReturn, errors } = state;
   
   // Don't calculate if there are validation errors
   if (hasErrors(errors)) {
@@ -181,8 +180,7 @@ function updateCalculations() {
     const calculations = calculateGrowthMetrics({
       marketPrice,
       currentDividend,
-      requiredReturn,
-      expectedDividend
+      requiredReturn
     });
     
     // Validate financial logic
@@ -194,8 +192,12 @@ function updateCalculations() {
       return;
     }
     
-    // Update state with calculations
-    setState({ growthCalculations: calculations });
+    // Clear errors and update calculations
+    setState({ 
+      errors: {},  // Explicitly clear errors
+      growthCalculations: calculations 
+    });
+    updateValidationSummary({});  // Explicitly hide error display
     
   } catch (error) {
     console.error('Calculation error:', error);
@@ -333,16 +335,14 @@ function handleStateChange(newState) {
   renderResults(growthCalculations, {
     marketPrice: newState.marketPrice,
     currentDividend: newState.currentDividend,
-    requiredReturn: newState.requiredReturn,
-    expectedDividend: newState.expectedDividend
+    requiredReturn: newState.requiredReturn
   });
   
   // Update dynamic equation
   renderDynamicEquation(growthCalculations, {
     marketPrice: newState.marketPrice,
     currentDividend: newState.currentDividend,
-    requiredReturn: newState.requiredReturn,
-    expectedDividend: newState.expectedDividend
+    requiredReturn: newState.requiredReturn
   });
   
   // Update chart if in chart view
@@ -440,14 +440,19 @@ function runSelfTests() {
   
   const tests = [
     {
-      name: 'Basic implied growth calculation',
-      inputs: { marketPrice: 50, currentDividend: 2, requiredReturn: 10, expectedDividend: 2.5 },
-      expected: { impliedGrowth: 5 } // 10% - (2.5/50) = 10% - 5% = 5%
+      name: 'Default values (100, 5, 7%)',
+      inputs: { marketPrice: 100, currentDividend: 5, requiredReturn: 7 },
+      expected: { impliedGrowth: 1.90 } // (0.07*100 - 5)/(100 + 5) = 2/105 = 1.90%
     },
     {
-      name: 'Implied growth with higher return',
-      inputs: { marketPrice: 100, currentDividend: 3, requiredReturn: 12, expectedDividend: 4 },
-      expected: { impliedGrowth: 8 } // 12% - (4/100) = 12% - 4% = 8%
+      name: 'Higher growth scenario',
+      inputs: { marketPrice: 50, currentDividend: 2, requiredReturn: 10 },
+      expected: { impliedGrowth: 5.77 } // (0.1*50 - 2)/(50 + 2) = 3/52 = 5.77%
+    },
+    {
+      name: 'Lower growth scenario',
+      inputs: { marketPrice: 100, currentDividend: 3, requiredReturn: 12 },
+      expected: { impliedGrowth: 8.74 } // (0.12*100 - 3)/(100 + 3) = 9/103 = 8.74%
     }
   ];
   

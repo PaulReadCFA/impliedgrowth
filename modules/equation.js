@@ -18,14 +18,14 @@ export function renderDynamicEquation(calculations, params) {
     return;
   }
   
-  const { impliedGrowth, impliedGrowthDecimal } = calculations;
-  const { requiredReturn, expectedDividend, marketPrice } = params;
+  const { impliedGrowth, impliedGrowthDecimal, expectedD1 } = calculations;
+  const { requiredReturn, currentDividend, marketPrice } = params;
   
   // Format values for display
   const gFormatted = formatPercentage(impliedGrowth);
   const rFormatted = formatPercentage(requiredReturn);
-  const d1Formatted = formatCurrency(expectedDividend);
-  const p0Formatted = formatCurrency(marketPrice);
+  const divtFormatted = formatCurrency(currentDividend);
+  const pvtFormatted = formatCurrency(marketPrice);
   
   // Build LaTeX equation using color scheme:
   // Green #15803d for g (growth rate)
@@ -36,11 +36,12 @@ export function renderDynamicEquation(calculations, params) {
   // Escape special characters in formatted values
   const rClean = rFormatted.replace('%', '\\%');
   const gClean = gFormatted.replace('%', '\\%');
-  const d1Clean = d1Formatted.replace('USD', '\\text{USD}');
-  const p0Clean = p0Formatted.replace('USD', '\\text{USD}');
+  const divtClean = divtFormatted.replace('USD', '\\text{USD}');
+  const pvtClean = pvtFormatted.replace('USD', '\\text{USD}');
   
-  // Simplified equation: g_implied = calculation with values only
-  const latex = `\\color{#15803d}{g_{\\text{implied}}} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${d1Clean}}}{\\color{#b95b1d}{${p0Clean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  // Show the curriculum formula with actual numbers:
+  // g = r - Div_t(1+g)/PV_t = result
+  const latex = `\\color{#15803d}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+g)}{\\color{#b95b1d}{${pvtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
   
   container.textContent = '$$' + latex + '$$';
   
@@ -51,8 +52,8 @@ export function renderDynamicEquation(calculations, params) {
   
   // Create screen-reader friendly announcement
   const announcement = `Implied growth rate equals ${gFormatted}. ` +
-    `Calculated as: required return ${rFormatted} ` +
-    `minus next dividend (Div sub t+1) ${d1Formatted} divided by current market price (PV sub t) ${p0Formatted}.`;
+    `Formula: g equals required return ${rFormatted} ` +
+    `minus current dividend ${divtFormatted} times quantity 1 plus g, divided by market price ${pvtFormatted}.`;
   
   // Update aria-live region for screen readers
   let liveRegion = document.getElementById('equation-live-region');

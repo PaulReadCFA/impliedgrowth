@@ -5,10 +5,9 @@
 
 export const state = {
   // Implied growth parameters
-  marketPrice: 54.56,
-  currentDividend: 3.60,
-  requiredReturn: 7.40,
-  expectedDividend: 3.50,
+  marketPrice: 100.0,
+  currentDividend: 5.0,
+  requiredReturn: 7.0,
   
   // UI state
   viewMode: 'chart', // 'chart' or 'table'

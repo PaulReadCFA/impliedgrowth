@@ -78,7 +78,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
       labels: labels,
       datasets: [
         {
-          label: 'Initial investment',
+          label: 'Initial investment / Market price',
           data: investmentData,
           backgroundColor: COLORS.price,
           borderWidth: 0,
@@ -152,14 +152,14 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
                 return `Growth rate (g): ${formatPercentage(value)}`;
               }
               
-              // For year 0, show "Initial investment"
-              if (isInitialYear && context.dataset.label === 'Initial investment') {
-                return `Initial investment (PV_t): ${formatCurrency(value, true)}`;
+              // For year 0, show "Initial investment / Market price"
+              if (isInitialYear && context.dataset.label === 'Initial investment / Market price') {
+                return `Initial investment / Market price (PV_t): ${formatCurrency(value, true)}`;
               }
               
               // Regular labels
-              if (context.dataset.label === 'Initial investment') {
-                return `Initial investment: ${formatCurrency(value, true)}`;
+              if (context.dataset.label === 'Initial investment / Market price') {
+                return `Initial investment / Market price: ${formatCurrency(value, true)}`;
               }
               if (context.dataset.label === 'Dividend cash flow') {
                 return `Dividend (Div): ${formatCurrency(value, true)}`;
@@ -184,19 +184,19 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
           title: {
             display: true,
             text: 'Years',
-            color: '#1f2937',
+            color: '#000000',
             font: {
               weight: '600'
             }
           },
           ticks: {
-            color: '#1f2937'
+            color: '#000000'
           },
           grid: {
             display: false
           },
           border: {
-            color: '#1f2937',
+            color: '#000000',
             width: 2
           }
         },
@@ -204,7 +204,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
           title: {
             display: true,
             text: 'Cash Flows (USD)',
-            color: '#1f2937',
+            color: '#000000',
             font: {
               weight: '600'
             }
@@ -220,7 +220,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
               });
               return value < 0 ? `−${formatted}` : formatted;
             },
-            color: '#1f2937',
+            color: '#000000',
             autoSkip: true,
             maxRotation: 0,
             minRotation: 0
@@ -229,7 +229,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             color: 'rgba(0, 0, 0, 0.05)'
           },
           border: {
-            color: '#1f2937',
+            color: '#000000',
             width: 2
           }
         },
@@ -316,7 +316,15 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             y = Math.min(bar0.y, bar1.y) - 5;
           }
           
-          ctx.fillText(formatCurrency(total, false), x, y);
+          // Format as bare number without USD
+          const absValue = Math.abs(total);
+          const formatted = absValue.toLocaleString('en-US', {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+          });
+          const displayValue = total < 0 ? `−${formatted}` : formatted;
+          
+          ctx.fillText(displayValue, x, y);
         });
         
         ctx.restore();
@@ -520,7 +528,7 @@ function announceDataPoint(cashFlow, total, growthRate) {
   }
   
   const isInitialYear = cashFlow.year === 0;
-  const investmentLabel = isInitialYear ? 'Initial investment (PV_t)' : 'No investment';
+  const investmentLabel = isInitialYear ? 'Initial investment / Market price (PV_t)' : 'No investment';
   
   const announcement = `Year ${cashFlow.year}. ` +
     `Growth rate (g): ${growthRate ? formatPercentage(growthRate) : '0%'}. ` +

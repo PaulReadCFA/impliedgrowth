@@ -24,18 +24,11 @@ const VALIDATION_RULES = {
     prefix: 'USD '
   },
   requiredReturn: {
-    min: 0.01,
+    min: 0.1,
     max: 25,
     required: true,
     label: 'Required return',
     unit: '%'
-  },
-  expectedDividend: {
-    min: 0,
-    max: 50,
-    required: true,
-    label: 'Expected next dividend',
-    prefix: 'USD '
   }
 };
 
@@ -105,9 +98,12 @@ export function validateAllInputs(inputs) {
   // Financial logic validation (only if no field errors)
   if (Object.keys(errors).length === 0) {
     const r = inputs.requiredReturn / 100;
-    const d1 = inputs.expectedDividend;
-    const p0 = inputs.marketPrice;
-    const g = r - (d1 / p0);
+    const pvt = inputs.marketPrice;
+    const divt = inputs.currentDividend;
+    
+    // Calculate g = (r*PV_t - Div_t) / (PV_t + Div_t)
+    // This is the algebraically solved form of: g = r - Div_t(1+g)/PV_t
+    const g = (r * pvt - divt) / (pvt + divt);
     
     const logicError = validateFinancialLogic(g, r);
     if (logicError) {

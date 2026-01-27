@@ -25,12 +25,6 @@ export function renderResults(calculations, params) {
   const growthBox = createGrowthRateBox(calculations);
   container.appendChild(growthBox);
   
-  // Create consistency check box (if inconsistent)
-  if (!calculations.d1Consistent) {
-    const consistencyBox = createConsistencyBox(calculations, params);
-    container.appendChild(consistencyBox);
-  }
-  
   // Create model info box
   const infoBox = createModelInfoBox(calculations, params);
   container.appendChild(infoBox);
@@ -70,53 +64,6 @@ function createGrowthRateBox(calculations) {
 }
 
 /**
- * Create consistency check box
- * @param {Object} calculations - Growth calculations
- * @param {Object} params - Input parameters
- * @returns {Element} Consistency box element
- */
-function createConsistencyBox(calculations, params) {
-  const box = createElement('div', { className: 'result-box consistency' });
-  
-  const title = createElement('h5', { className: 'result-title consistency' }, 
-    'Consistency Check'
-  );
-  box.appendChild(title);
-  
-  const content = createElement('div', { 
-    className: 'analysis-content',
-    'aria-live': 'polite',
-    'aria-atomic': 'true',
-    'role': 'region',
-    'aria-labelledby': 'consistency-heading'
-  });
-  
-  // Add ID to title for aria-labelledby
-  title.id = 'consistency-heading';
-  
-  // Warning message
-  const warning = createElement('div', { className: 'consistency-warning' });
-  
-  const warningTitle = createElement('div', { className: 'consistency-warning-title' },
-    'Note: Div_t+1 values differ'
-  );
-  warning.appendChild(warningTitle);
-  
-  const details = createElement('div', { className: 'consistency-details' });
-  details.innerHTML = `
-    Expected Div<sub>t+1</sub>: ${formatCurrency(params.expectedDividend)}<br>
-    Calculated Div<sub>t+1</sub>: ${formatCurrency(calculations.calculatedD1)}<br>
-    <small>(Based on Div<sub>t</sub> × (1 + g))</small>
-  `;
-  warning.appendChild(details);
-  
-  content.appendChild(warning);
-  box.appendChild(content);
-  
-  return box;
-}
-
-/**
  * Create model information box
  * @param {Object} calculations - Growth calculations
  * @param {Object} params - Input parameters
@@ -145,7 +92,8 @@ function createModelInfoBox(calculations, params) {
   const items = [
     { label: 'Required return (r)', value: formatPercentage(params.requiredReturn) },
     { label: 'Dividend yield', value: formatPercentage(calculations.dividendYield) },
-    { label: 'Implied growth (g)', value: formatPercentage(calculations.impliedGrowth) }
+    { label: 'Implied growth (g)', value: formatPercentage(calculations.impliedGrowth) },
+    { label: 'Expected next dividend (Div<sub>t+1</sub>)', value: formatCurrency(calculations.expectedD1) }
   ];
   
   items.forEach(item => {
@@ -161,7 +109,7 @@ function createModelInfoBox(calculations, params) {
     className: 'analysis-details',
     style: 'margin-top: 0.75rem; font-size: 0.8125rem;'
   });
-  formula.innerHTML = `<em>Formula: g = r − (Div<sub>t+1</sub> / PV<sub>t</sub>)</em>`;
+  formula.innerHTML = `<em>Formula: g = r − Div<sub>t</sub>(1+g) / PV<sub>t</sub></em>`;
   content.appendChild(formula);
   
   box.appendChild(content);
