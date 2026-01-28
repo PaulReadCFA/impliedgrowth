@@ -54,12 +54,6 @@ function createGrowthRateBox(calculations) {
   
   box.appendChild(valueContainer);
   
-  // Description
-  const description = createElement('div', { className: 'result-description' },
-    'Expected by the market based on current pricing'
-  );
-  box.appendChild(description);
-  
   return box;
 }
 
@@ -73,7 +67,7 @@ function createModelInfoBox(calculations, params) {
   const box = createElement('div', { className: 'result-box model-info' });
   
   const title = createElement('h5', { className: 'result-title model-info' }, 
-    'Gordon Growth Model'
+    'Constant Dividend Growth Model'
   );
   box.appendChild(title);
   
@@ -86,13 +80,20 @@ function createModelInfoBox(calculations, params) {
   // Add ID to title for aria-labelledby
   title.id = 'model-info-heading';
   
+  // Description about dividend yield
+  const description = createElement('p', { 
+    style: 'margin-bottom: 0.75rem; font-size: 0.9375rem; color: var(--color-gray-700);'
+  });
+  description.innerHTML = `Based on this scenario, the current dividend yield would be ${formatPercentage(calculations.dividendYield)}.`;
+  content.appendChild(description);
+  
   // Model details list
   const list = createElement('ul', { className: 'model-info-list' });
   
   const items = [
-    { label: 'Required return (r)', value: formatPercentage(params.requiredReturn) },
+    { label: 'Required return (<i>r</i>)', value: formatPercentage(params.requiredReturn) },
     { label: 'Dividend yield', value: formatPercentage(calculations.dividendYield) },
-    { label: 'Implied growth (g)', value: formatPercentage(calculations.impliedGrowth) },
+    { label: 'Implied growth (<i>g</i>)', value: formatPercentage(calculations.impliedGrowth) },
     { label: 'Expected next dividend (Div<sub>t+1</sub>)', value: formatCurrency(calculations.expectedD1) }
   ];
   
@@ -103,14 +104,6 @@ function createModelInfoBox(calculations, params) {
   });
   
   content.appendChild(list);
-  
-  // Formula reminder
-  const formula = createElement('div', { 
-    className: 'analysis-details',
-    style: 'margin-top: 0.75rem; font-size: 0.8125rem;'
-  });
-  formula.innerHTML = `<em>Formula: g = r − Div<sub>t</sub>(1+g) / PV<sub>t</sub></em>`;
-  content.appendChild(formula);
   
   box.appendChild(content);
   

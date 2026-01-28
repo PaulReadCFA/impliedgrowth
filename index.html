@@ -64,16 +64,16 @@
         <!-- Static equation with color-coded variables -->
         <div class="equation-container" role="region" aria-label="Gordon Growth Model formula" id="static-equation-container">
           <div id="static-equation">
-            $$g = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{Div_t}(1+g)}{\color{#b95b1d}{PV_t}}$$
+            $$\color{#15803d}{g} = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{Div_t}(1+\color{#15803d}{g})}{\color{#b95b1d}{PV_t}}$$
           </div>
         </div>
       </section>
 
       <!-- Card 1: Dynamic Equation -->
       <section id="equation-card" class="card">
-        <h4 class="card-title">Gordon Growth Model Equation with Your Inputs</h4>
+        <h4 class="card-title">Constant Dividend Growth Model Equation with Your Inputs</h4>
         <p class="equation-intro">
-          Using your values, the equation becomes:
+          Using your values, and solving for <span style="color: #15803d; font-weight: 600; font-style: italic;">g</span>, the equation becomes:
         </p>
         
         <!-- Dynamic equation with actual values -->
@@ -128,7 +128,7 @@
 
               <div class="input-inline">
                 <label for="required-return" class="input-label-inline">
-                  Required return <span style="color: #7a46ff;">(r)</span>:
+                  Required return <span style="color: #7a46ff;">(<i>r</i>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
@@ -167,7 +167,7 @@
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Growth rate <span style="color: #15803d;">(g)</span>
+                Dividend growth rate <span style="color: #15803d;">(<i>g</i>)</span>
               </span>
             </div>
             
@@ -208,6 +208,9 @@
                tabindex="-1">
             <canvas id="growth-chart"></canvas>
           </div>
+          <p class="table-note" id="chart-note" style="display: none;">
+            Note: Cash flows continue until infinity, but only the first 10 years are shown.
+          </p>
 
           <!-- Table container -->
           <div id="table-container" class="table-wrapper" style="display: none;"

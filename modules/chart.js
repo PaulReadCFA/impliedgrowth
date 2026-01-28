@@ -97,7 +97,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         },
         // Growth rate horizontal line
         {
-          label: 'Growth rate (g)',
+          label: 'Dividend growth rate (g)',
           data: labels.map(() => growthRate),
           type: 'line',
           borderColor: COLORS.growth,
@@ -148,8 +148,8 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
               const isInitialYear = index === 0;
               
               // Growth rate line
-              if (context.dataset.label === 'Growth rate (g)') {
-                return `Growth rate (g): ${formatPercentage(value)}`;
+              if (context.dataset.label === 'Dividend growth rate (g)') {
+                return `Dividend growth rate (g): ${formatPercentage(value)}`;
               }
               
               // For year 0, show "Initial investment / Market price"
@@ -171,7 +171,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
               const index = context[0].dataIndex;
               const total = totalData[index];
               // Only show total for cash flow bars, not growth line
-              if (context[0].dataset.label !== 'Growth rate (g)') {
+              if (context[0].dataset.label !== 'Dividend growth rate (g)') {
                 return `Total: ${formatCurrency(total, true)}`;
               }
               return '';
@@ -236,10 +236,11 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         y2: {
           title: {
             display: true,
-            text: 'Growth Rate',
+            text: 'Dividend growth rate (g) %',
             color: COLORS.growth,
             font: {
-              weight: '600'
+              weight: '600',
+              style: 'normal'
             }
           },
           position: 'right',
@@ -282,7 +283,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         const ctx = chart.ctx;
         ctx.save();
         ctx.font = 'bold 11px sans-serif';
-        ctx.fillStyle = COLORS.darkText;
+        ctx.fillStyle = '#000000'; // Same black as primary y-axis
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
         
@@ -316,11 +317,11 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             y = Math.min(bar0.y, bar1.y) - 5;
           }
           
-          // Format as bare number without USD
+          // Format as bare number without USD, 2 decimal places
           const absValue = Math.abs(total);
           const formatted = absValue.toLocaleString('en-US', {
-            minimumFractionDigits: 1,
-            maximumFractionDigits: 1
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
           });
           const displayValue = total < 0 ? `−${formatted}` : formatted;
           
@@ -335,6 +336,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
       id: 'gLabel',
       afterDatasetsDraw: (chart) => {
         if (!showLabels) return;
+        if (growthRate === null || growthRate === undefined) return;
         
         const ctx = chart.ctx;
         const meta = chart.getDatasetMeta(2); // Growth rate line dataset
@@ -347,7 +349,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         const centerX = (chartArea.left + chartArea.right) / 2;
         
         ctx.save();
-        ctx.font = '600 12px sans-serif';
+        ctx.font = 'italic 600 12px sans-serif';
         
         // Draw g label (growth rate) - centered
         const gLabelText = `g = ${growthRate.toFixed(2)}%`;

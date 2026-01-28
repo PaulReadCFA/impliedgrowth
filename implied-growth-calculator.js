@@ -142,6 +142,8 @@ function setupInputListeners() {
         errors[field] = error;
       } else {
         delete errors[field];
+        // Also clear financial error - we'll revalidate below
+        delete errors.financial;
       }
       
       setState({
@@ -152,9 +154,13 @@ function setupInputListeners() {
       // Update validation summary
       updateValidationSummary(errors);
       
-      // Recalculate if no errors
+      // Always try to recalculate if no field errors
+      // This will revalidate financial logic with new values
       if (!hasErrors(errors)) {
         updateCalculations();
+      } else {
+        // Clear calculations if field errors exist
+        setState({ growthCalculations: null });
       }
     }, 300);
     
@@ -262,6 +268,7 @@ function switchView(view, moveFocus = false) {
   const chartContainer = $('#chart-container');
   const tableContainer = $('#table-container');
   const legend = $('#chart-legend');
+  const chartNote = $('#chart-note');
   
   // Update state
   setState({ viewMode: view });
@@ -277,6 +284,7 @@ function switchView(view, moveFocus = false) {
     chartContainer.style.display = 'block';
     tableContainer.style.display = 'none';
     legend.style.display = 'flex';
+    if (chartNote) chartNote.style.display = 'block';
     
     // Announce change
     announceToScreenReader('Chart view active');
@@ -301,6 +309,7 @@ function switchView(view, moveFocus = false) {
     tableContainer.style.display = 'block';
     chartContainer.style.display = 'none';
     legend.style.display = 'none';
+    if (chartNote) chartNote.style.display = 'none';
     
     // Announce change
     announceToScreenReader('Table view active');

@@ -41,7 +41,7 @@ export function renderDynamicEquation(calculations, params) {
   
   // Show the curriculum formula with actual numbers:
   // g = r - Div_t(1+g)/PV_t = result
-  const latex = `\\color{#15803d}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+g)}{\\color{#b95b1d}{${pvtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  const latex = `\\color{#15803d}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+\\color{#15803d}{g})}{\\color{#b95b1d}{${pvtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
   
   container.textContent = '$$' + latex + '$$';
   

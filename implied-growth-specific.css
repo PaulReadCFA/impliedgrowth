@@ -51,6 +51,8 @@
 }
 
 .result-title.model-info {
+  font-size: 1.125rem;
+  font-weight: 600;
   color: var(--color-purple-bold);
 }
 
@@ -311,7 +313,7 @@ math {
 }
 
 .model-info-list li {
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   color: var(--color-gray-700);
   line-height: 1.4;
 }

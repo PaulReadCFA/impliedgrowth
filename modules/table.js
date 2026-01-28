@@ -28,9 +28,9 @@ export function renderTable(cashFlows, growthRate) {
     <thead>
       <tr>
         <th scope="col" class="text-left">Year</th>
-        <th scope="col" class="text-right">Growth Rate <span style="color: #15803d;">(g)</span></th>
-        <th scope="col" class="text-right">Dividend <span style="color: #3c6ae5;">(Div)</span></th>
-        <th scope="col" class="text-right">Initial investment / Market price <span style="color: #b95b1d;">(PV<sub>t</sub>)</span></th>
+        <th scope="col" class="text-right">Dividend growth rate <span style="color: #047857;">(<i>g</i>)</span></th>
+        <th scope="col" class="text-right">Dividend <span style="color: #1e40af;">(Div)</span></th>
+        <th scope="col" class="text-right">Initial investment / Market price <span style="color: #92400e;">(PV<sub>t</sub>)</span></th>
         <th scope="col" class="text-right">Total Cash Flow</th>
         <th scope="col" class="text-right">Cumulative</th>
       </tr>
@@ -45,9 +45,9 @@ export function renderTable(cashFlows, growthRate) {
     html += `
       <tr>
         <td class="text-left">${cf.year}</td>
-        <td class="text-right" style="color: #15803d;">${formatPercentage(growthRate)}</td>
-        <td class="text-right" style="color: #3c6ae5;">${formatCurrency(cf.dividend)}</td>
-        <td class="text-right" style="color: #b95b1d;">${formatCurrency(cf.investment)}</td>
+        <td class="text-right" style="color: #047857;">${formatPercentage(growthRate)}</td>
+        <td class="text-right" style="color: #1e40af;">${formatCurrency(cf.dividend)}</td>
+        <td class="text-right" style="color: #92400e;">${formatCurrency(cf.investment)}</td>
         <td class="text-right"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
         <td class="text-right"><strong>${formatCurrency(cf.cumulativeCashFlow)}</strong></td>
       </tr>`;
