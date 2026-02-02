@@ -57,6 +57,24 @@ export function formatCurrency(value, signed = false) {
 }
 
 /**
+ * Format number without currency prefix (for tables with USD in header)
+ * @param {number} value - Numeric value
+ * @returns {string} Formatted number string
+ */
+export function formatNumber(value) {
+  const absValue = Math.abs(value);
+  const formatted = absValue.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  
+  if (value < 0) {
+    return `−${formatted}`; // Unicode minus sign (U+2212)
+  }
+  return formatted;
+}
+
+/**
  * Format number as percentage
  * @param {number} value - Numeric value (as percentage, e.g., 5.5 for 5.5%)
  * @param {number} decimals - Number of decimal places

@@ -11,10 +11,11 @@ import { formatCurrency, formatPercentage } from './utils.js';
  * @param {Object} params - Input parameters
  */
 export function renderDynamicEquation(calculations, params) {
-  const container = document.getElementById('dynamic-equation');
+  const originalContainer = document.getElementById('dynamic-equation');
+  const solvedContainer = document.getElementById('dynamic-solved-equation');
   
-  if (!container) {
-    console.error('Dynamic equation container not found');
+  if (!originalContainer || !solvedContainer) {
+    console.error('Dynamic equation containers not found');
     return;
   }
   
@@ -36,18 +37,25 @@ export function renderDynamicEquation(calculations, params) {
   // Escape special characters in formatted values
   const rClean = rFormatted.replace('%', '\\%');
   const gClean = gFormatted.replace('%', '\\%');
-  const divtClean = divtFormatted.replace('USD', '\\text{USD}');
+  const divtClean = divtFormatted.replace('USD', '\\text{USD}').replace('−', '-');
   const pvtClean = pvtFormatted.replace('USD', '\\text{USD}');
   
-  // Show the curriculum formula with actual numbers:
+  // Original formula with actual numbers:
   // g = r - Div_t(1+g)/PV_t = result
-  const latex = `\\color{#15803d}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+\\color{#15803d}{g})}{\\color{#b95b1d}{${pvtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  const originalLatex = `\\color{#15803d}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+\\color{#15803d}{g})}{\\color{#b95b1d}{${pvtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
   
-  container.textContent = '$$' + latex + '$$';
+  originalContainer.textContent = '$$' + originalLatex + '$$';
   
-  // Trigger MathJax to render the equation
+  // Solved formula with actual numbers:
+  // g = (r*PV_t - Div_t) / (PV_t + Div_t) = result
+  const solvedLatex = `\\color{#15803d}{g} = \\frac{\\color{#7a46ff}{${rClean}} \\times \\color{#b95b1d}{${pvtClean}} - \\color{#3c6ae5}{${divtClean}}}{\\color{#b95b1d}{${pvtClean}} + \\color{#3c6ae5}{${divtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  
+  solvedContainer.textContent = '$$' + solvedLatex + '$$';
+  
+  // Trigger MathJax to render both equations
   if (window.MathJax && window.MathJax.Hub) {
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, container]);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, originalContainer]);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, solvedContainer]);
   }
   
   // Create screen-reader friendly announcement

@@ -80,19 +80,18 @@ function createModelInfoBox(calculations, params) {
   // Add ID to title for aria-labelledby
   title.id = 'model-info-heading';
   
-  // Description about dividend yield
+  // Description
   const description = createElement('p', { 
     style: 'margin-bottom: 0.75rem; font-size: 0.9375rem; color: var(--color-gray-700);'
   });
-  description.innerHTML = `Based on this scenario, the current dividend yield would be ${formatPercentage(calculations.dividendYield)}.`;
+  description.innerHTML = `Based on this scenario, we have the following:`;
   content.appendChild(description);
   
-  // Model details list
+  // Model details list (removed dividend yield line)
   const list = createElement('ul', { className: 'model-info-list' });
   
   const items = [
     { label: 'Required return (<i>r</i>)', value: formatPercentage(params.requiredReturn) },
-    { label: 'Dividend yield', value: formatPercentage(calculations.dividendYield) },
     { label: 'Implied growth (<i>g</i>)', value: formatPercentage(calculations.impliedGrowth) },
     { label: 'Expected next dividend (Div<sub>t+1</sub>)', value: formatCurrency(calculations.expectedD1) }
   ];

@@ -3,7 +3,7 @@
  * Chart rendering using Chart.js with keyboard accessibility
  * 
  * Unified Color Scheme:
- * - Orange #b95b1d: Present Value/Current Price (P₀)
+ * - Orange #b95b1d: Present Value/Current Price (PV₀)
  * - Blue #3c6ae5: Periodic Payments (Dividends)
  * - Purple #7a46ff: Rate of Return (r)
  * - Green #15803d: Growth Rates (g)
@@ -13,7 +13,7 @@ import { formatCurrency, formatPercentage } from './utils.js';
 
 // Unified color scheme
 const COLORS = {
-  price: '#b95b1d',       // Orange - Market price (P₀)
+  price: '#b95b1d',       // Orange - Market price (PV₀)
   dividend: '#3c6ae5',    // Blue - Dividends (D)
   return: '#7a46ff',      // Purple - Required return (r)
   growth: '#15803d',      // Green - Growth rate (g)
@@ -38,13 +38,13 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
     return;
   }
   
-  // Make canvas focusable and add keyboard navigation
+  // Make canvas focusable for keyboard navigation
   canvas.setAttribute('tabindex', '0');
   canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-roledescription', 'interactive chart');
   canvas.setAttribute(
     'aria-label',
-    'Interactive dividend growth chart showing initial investment and projected dividend payments over 10 years. Press Tab to focus, then use Left and Right arrow keys to navigate between years. Home goes to first year, End goes to last year.'
+    'Interactive dividend growth chart showing initial investment and projected dividend payments over 10 years. Press Tab to focus the chart, then use Left and Right arrow keys to navigate between years. Press Home to jump to year 0, or End to jump to the final year.'
   );
 
   const ctx = canvas.getContext('2d');
@@ -152,9 +152,9 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
                 return `Dividend growth rate (g): ${formatPercentage(value)}`;
               }
               
-              // For year 0, show "Initial investment / Market price"
+              // For year 0, show "Initial investment / Market price" with subscript t
               if (isInitialYear && context.dataset.label === 'Initial investment / Market price') {
-                return `Initial investment / Market price (PV_t): ${formatCurrency(value, true)}`;
+                return `Initial investment / Market price (PVₜ): ${formatCurrency(value, true)}`;
               }
               
               // Regular labels
@@ -203,7 +203,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         y: {
           title: {
             display: true,
-            text: 'Cash Flows (USD)',
+            text: 'Cash flows (USD)',
             color: '#000000',
             font: {
               weight: '600'
@@ -530,7 +530,7 @@ function announceDataPoint(cashFlow, total, growthRate) {
   }
   
   const isInitialYear = cashFlow.year === 0;
-  const investmentLabel = isInitialYear ? 'Initial investment / Market price (PV_t)' : 'No investment';
+  const investmentLabel = isInitialYear ? 'Initial investment / Market price (PVₜ)' : 'No investment';
   
   const announcement = `Year ${cashFlow.year}. ` +
     `Growth rate (g): ${growthRate ? formatPercentage(growthRate) : '0%'}. ` +

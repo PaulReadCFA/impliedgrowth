@@ -67,7 +67,7 @@ function init() {
  */
 function setupSkipLinks() {
   const skipToDataEntry = document.querySelector('a[href="#data-entry"]');
-  const skipToVisualizer = document.querySelector('a[href="#visualizer"]');
+  const skipToTableBtn = document.querySelector('a[href="#table-view-btn"]');
   
   if (skipToDataEntry) {
     listen(skipToDataEntry, 'click', (e) => {
@@ -86,26 +86,21 @@ function setupSkipLinks() {
     });
   }
   
-  if (skipToVisualizer) {
-    listen(skipToVisualizer, 'click', (e) => {
+  if (skipToTableBtn) {
+    listen(skipToTableBtn, 'click', (e) => {
       e.preventDefault();
       
       // Switch to table view
       switchView('table');
       
-      // Scroll the section into view
-      const section = $('#visualizer');
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Focus the table button
+      const tableBtn = $('#table-view-btn');
+      if (tableBtn) {
+        tableBtn.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          tableBtn.focus();
+        }, 100);
       }
-      
-      // Focus the table after switching
-      setTimeout(() => {
-        const table = $('#cash-flow-table');
-        if (table) {
-          table.focus();
-        }
-      }, 400);
     });
   }
 }
@@ -229,40 +224,47 @@ function setupViewToggle() {
   
   // Click handlers
   listen(chartBtn, 'click', () => {
-    switchView('chart', true); // true = move focus to chart
+    switchView('chart');
   });
   
   listen(tableBtn, 'click', () => {
-    switchView('table', true); // true = move focus to table
+    switchView('table');
   });
   
-  // Arrow key navigation between buttons
-  const handleArrowKeys = (e, currentBtn, nextBtn, view) => {
+  // Keyboard handlers for Chart button
+  listen(chartBtn, 'keydown', (e) => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
-      // Switch view
-      switchView(view, false); // false = don't move focus, stay on buttons
-      // Focus the other button
-      nextBtn.focus();
+      // Arrow keys: move to table button and switch to table view
+      tableBtn.focus();
+      switchView('table');
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      // Switch view and move focus
-      switchView(view, true);
+      // Enter/Space: activate chart view (this button's view)
+      switchView('chart');
     }
-  };
+  });
   
-  // When on chart button, arrow switches to table view
-  // When on table button, arrow switches to chart view
-  listen(chartBtn, 'keydown', (e) => handleArrowKeys(e, chartBtn, tableBtn, 'table'));
-  listen(tableBtn, 'keydown', (e) => handleArrowKeys(e, tableBtn, chartBtn, 'chart'));
+  // Keyboard handlers for Table button
+  listen(tableBtn, 'keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      // Arrow keys: move to chart button and switch to chart view
+      chartBtn.focus();
+      switchView('chart');
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // Enter/Space: activate table view (this button's view)
+      switchView('table');
+    }
+  });
 }
 
 /**
  * Switch between chart and table views
  * @param {string} view - 'chart' or 'table'
- * @param {boolean} moveFocus - Whether to move focus to the view
  */
-function switchView(view, moveFocus = false) {
+function switchView(view) {
   const chartBtn = $('#chart-view-btn');
   const tableBtn = $('#table-view-btn');
   const chartContainer = $('#chart-container');
@@ -289,16 +291,6 @@ function switchView(view, moveFocus = false) {
     // Announce change
     announceToScreenReader('Chart view active');
     
-    // Move focus if requested
-    if (moveFocus) {
-      const canvas = $('#growth-chart');
-      if (canvas) {
-        focusElement(canvas, 100);
-        // Set focus on first bar
-        currentFocusIndex = 0;
-      }
-    }
-    
   } else {
     tableBtn.classList.add('active');
     tableBtn.setAttribute('aria-pressed', 'true');
@@ -313,14 +305,6 @@ function switchView(view, moveFocus = false) {
     
     // Announce change
     announceToScreenReader('Table view active');
-    
-    // Move focus if requested
-    if (moveFocus) {
-      const table = $('#cash-flow-table');
-      if (table) {
-        focusElement(table, 100);
-      }
-    }
   }
 }
 
@@ -472,7 +456,7 @@ function runSelfTests() {
       if (test.expected.impliedGrowth !== undefined) {
         const diff = Math.abs(result.impliedGrowth - test.expected.impliedGrowth);
         if (diff <= 0.1) {
-          console.log(`✓ ${test.name} passed`);
+          console.log(`âœ“ ${test.name} passed`);
         } else {
           console.warn(`✗ ${test.name} failed: expected ${test.expected.impliedGrowth}%, got ${result.impliedGrowth.toFixed(2)}%`);
         }

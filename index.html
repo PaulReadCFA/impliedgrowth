@@ -55,7 +55,7 @@
     <!-- Skip Links for Accessibility -->
     <nav role="navigation" aria-label="Skip links">
       <a href="#data-entry" class="skip-link">Skip to data entry</a>
-      <a href="#visualizer" class="skip-link">Skip to data table</a>
+      <a href="#table-view-btn" class="skip-link">Skip to data table</a>
     </nav>
     
     <main class="content">
@@ -67,18 +67,35 @@
             $$\color{#15803d}{g} = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{Div_t}(1+\color{#15803d}{g})}{\color{#b95b1d}{PV_t}}$$
           </div>
         </div>
+        <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
+          Solving for <span style="color: #15803d; font-style: italic;">g</span>:
+        </p>
+        <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model formula" id="static-solved-equation-container">
+          <div id="static-solved-equation">
+            $$\color{#15803d}{g} = \frac{\color{#7a46ff}{r}\color{#b95b1d}{PV_t} - \color{#3c6ae5}{Div_t}}{\color{#b95b1d}{PV_t} + \color{#3c6ae5}{Div_t}}$$
+          </div>
+        </div>
       </section>
 
       <!-- Card 1: Dynamic Equation -->
-      <section id="equation-card" class="card">
+      <section id="equation-card" class="card" style="min-height: 320px;">
         <h4 class="card-title">Constant Dividend Growth Model Equation with Your Inputs</h4>
         <p class="equation-intro">
-          Using your values, and solving for <span style="color: #15803d; font-weight: 600; font-style: italic;">g</span>, the equation becomes:
+          Using your values, the equations become:
         </p>
         
         <!-- Dynamic equation with actual values -->
         <div class="equation-container" role="region" aria-label="Gordon Growth Model with your values" aria-live="polite" id="dynamic-equation-container">
           <div id="dynamic-equation">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+        
+        <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
+          Solving for <span style="color: #15803d; font-style: italic;">g</span>:
+        </p>
+        <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model with your values" aria-live="polite" id="dynamic-solved-equation-container">
+          <div id="dynamic-solved-equation">
             <!-- Populated by JavaScript -->
           </div>
         </div>
@@ -88,7 +105,7 @@
       <section class="card" id="calculator" tabindex="-1">
         <h4 class="card-title">Calculator Inputs</h4>
         <p class="equation-intro" style="margin-bottom: 1rem;">
-          Input details below. The calculations and visualizations will update automatically as you change the values.
+          Enter your stock details below. The calculations and visualizations will update automatically as you change the values.
         </p>
         <div class="card-content">
           <!-- Input controls -->
@@ -215,9 +232,8 @@
           <!-- Table container -->
           <div id="table-container" class="table-wrapper" style="display: none;"
                role="region"  
-               aria-label="Dividend growth projection table"  
-               tabindex="-1">
-            <table id="cash-flow-table" class="data-table" tabindex="0">
+               aria-label="Dividend growth projection table">
+            <table id="cash-flow-table" class="data-table" aria-label="Dividend growth projection table.">
               <!-- Populated by JavaScript -->
             </table>
             <p class="table-note">
