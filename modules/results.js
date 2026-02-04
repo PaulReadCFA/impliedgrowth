@@ -45,11 +45,8 @@ function createGrowthRateBox(calculations) {
   
   const valueContainer = createElement('div', { className: 'result-value' });
   
-  // Growth rate value with aria-live for screen reader announcements
-  const growthValue = createElement('div', {
-    'aria-live': 'polite',
-    'aria-atomic': 'true'
-  }, formatPercentage(calculations.impliedGrowth));
+  // Growth rate value - announcement handled by equation module
+  const growthValue = createElement('div', {}, formatPercentage(calculations.impliedGrowth));
   valueContainer.appendChild(growthValue);
   
   box.appendChild(valueContainer);
