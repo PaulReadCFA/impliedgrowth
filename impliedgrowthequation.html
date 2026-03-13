@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Implied Growth Model — Static Equation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Config MUST be before the MathJax script src -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']],
+        processEscapes: true
+      },
+      "HTML-CSS": { scale: 100, linebreaks: { automatic: true } },
+      SVG:        { scale: 100, linebreaks: { automatic: true } },
+      CommonHTML: { scale: 100, linebreaks: { automatic: true } },
+      menuSettings: { inTabOrder: false }
+    });
+
+    MathJax.Hub.Register.MessageHook("End Process", function () {
+      document.querySelectorAll('.MathJax, .MathJax_CHTML, .mjx-chtml, [id*="MathJax"]')
+        .forEach(function (el) { el.removeAttribute('tabindex'); });
+      postHeight();
+    });
+  </script>
+
+  <!-- No async -->
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-gray-600: #4b5563;
+      --color-gray-200: #e5e7eb;
+    }
+
+    html, body {
+      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                   Helvetica, Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      background: white;   /* was transparent — caused blank page when viewed standalone */
+      padding: 0.25rem;    /* small buffer so borders aren't clipped */
+      /* removed overflow:hidden — was swallowing content when viewed standalone */
+    }
+
+    .equation-container {
+      padding: 1rem;
+      margin: 0.75rem 0;
+      background: white;
+      border: 1px solid var(--color-gray-200);
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      text-align: center;
+    }
+
+    .equation-container:first-child { margin-top: 0; }
+
+    .equation-intro {
+      font-size: 1rem;
+      color: var(--color-gray-600);
+      margin: 1rem 0 0.5rem;
+      text-align: left;
+      font-weight: 400;
+    }
+
+    .MathJax, .MathJax_Display { text-align: center !important; }
+  </style>
+</head>
+<body>
+
+  <div class="equation-container"
+       role="region"
+       aria-label="Gordon Growth Model formula">
+    <div id="static-equation">
+      $$\color{#15803d}{g} = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{\mathrm{Div}_t}(1+\color{#15803d}{g})}{\color{#b95b1d}{PV_t}}$$
+    </div>
+  </div>
+
+  <p class="equation-intro">
+    Solving for <span style="color: #15803d; font-style: italic;">g</span>:
+  </p>
+
+  <div class="equation-container"
+       role="region"
+       aria-label="Solved Gordon Growth Model formula">
+    <div id="static-solved-equation">
+      $$\color{#15803d}{g} = \frac{\color{#7a46ff}{r}\color{#b95b1d}{PV_t} - \color{#3c6ae5}{\mathrm{Div}_t}}{\color{#b95b1d}{PV_t} + \color{#3c6ae5}{\mathrm{Div}_t}}$$
+    </div>
+  </div>
+
+  <script>
+    function postHeight() {
+      var h = document.documentElement.scrollHeight;
+      window.parent.postMessage({ type: 'iframeHeight', id: 'static-equation', height: h }, '*');
+    }
+    window.addEventListener('load', postHeight);
+    window.addEventListener('resize', postHeight);
+  </script>
+</body>
+</html>

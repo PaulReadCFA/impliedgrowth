@@ -51,9 +51,9 @@ export function formatCurrency(value, signed = false) {
   });
   
   if (value < 0) {
-    return `−USD ${formatted}`; // Unicode minus sign (U+2212)
+    return `−USD${formatted}`; // Unicode minus sign (U+2212), no space
   }
-  return `USD ${formatted}`;
+  return `USD${formatted}`;
 }
 
 /**

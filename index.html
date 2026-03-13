@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Implied Growth Rate Calculator | CFA Institute</title>
   <meta name="description" content="Interactive implied growth rate calculator using the Gordon Growth Model">
-  
+
+  <!-- Lato font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
   <!-- Styles -->
   <link rel="stylesheet" href="cfa-base.css">
   <link rel="stylesheet" href="implied-growth-specific.css">
-  
-  <!-- MathJax 2.7.7 for equation rendering -->
+
+  <!-- MathJax 2.7.7 -->
   <script type="text/javascript" async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
@@ -21,94 +26,38 @@
         displayMath: [['$$','$$'], ['\\[','\\]']],
         processEscapes: true
       },
-      "HTML-CSS": {
-        scale: 100,
-        linebreaks: { automatic: true }
-      },
-      SVG: {
-        scale: 100,
-        linebreaks: { automatic: true }
-      },
-      CommonHTML: {
-        scale: 100,
-        linebreaks: { automatic: true }
-      },
-      menuSettings: {
-        inTabOrder: false
-      }
+      "HTML-CSS": { scale: 100, linebreaks: { automatic: true } },
+      SVG:        { scale: 100, linebreaks: { automatic: true } },
+      CommonHTML: { scale: 100, linebreaks: { automatic: true } },
+      menuSettings: { inTabOrder: false }
     });
-    
-    // Remove tabindex from MathJax elements for a11y compliance
-    MathJax.Hub.Register.MessageHook("End Process", function (message) {
-      var elements = document.querySelectorAll('.MathJax, .MathJax_CHTML, .mjx-chtml, [id*="MathJax"]');
-      elements.forEach(function(el) {
-        el.removeAttribute('tabindex');
-      });
+
+    MathJax.Hub.Register.MessageHook("End Process", function () {
+      document.querySelectorAll('.MathJax, .MathJax_CHTML, .mjx-chtml, [id*="MathJax"]')
+        .forEach(function (el) { el.removeAttribute('tabindex'); });
     });
   </script>
-  
-  <!-- Chart.js for visualization -->
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <!-- Skip Links for Accessibility -->
+    <!-- Skip Links -->
     <nav role="navigation" aria-label="Skip links">
       <a href="#data-entry" class="skip-link">Skip to data entry</a>
       <a href="#table-view-btn" class="skip-link">Skip to data table</a>
     </nav>
-    
+
     <main class="content">
-      <!-- Card 0: Static Equation -->
-      <section id="static-equation-card" class="card">
-        <!-- Static equation with color-coded variables -->
-        <div class="equation-container" role="region" aria-label="Gordon Growth Model formula" id="static-equation-container">
-          <div id="static-equation">
-            $$\color{#15803d}{g} = \color{#7a46ff}{r} - \frac{\color{#3c6ae5}{Div_t}(1+\color{#15803d}{g})}{\color{#b95b1d}{PV_t}}$$
-          </div>
-        </div>
-        <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
-          Solving for <span style="color: #15803d; font-style: italic;">g</span>:
-        </p>
-        <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model formula" id="static-solved-equation-container">
-          <div id="static-solved-equation">
-            $$\color{#15803d}{g} = \frac{\color{#7a46ff}{r}\color{#b95b1d}{PV_t} - \color{#3c6ae5}{Div_t}}{\color{#b95b1d}{PV_t} + \color{#3c6ae5}{Div_t}}$$
-          </div>
-        </div>
-      </section>
 
-      <!-- Card 1: Dynamic Equation -->
-      <section id="equation-card" class="card" style="min-height: 320px;">
-        <h4 class="card-title">Constant Dividend Growth Model Equation with Your Inputs</h4>
-        <p class="equation-intro">
-          Using your values, the equations become:
-        </p>
-        
-        <!-- Dynamic equation with actual values -->
-        <div class="equation-container" role="region" aria-label="Gordon Growth Model with your values" id="dynamic-equation-container">
-          <div id="dynamic-equation">
-            <!-- Populated by JavaScript -->
-          </div>
-        </div>
-        
-        <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
-          Solving for <span style="color: #15803d; font-style: italic;">g</span>:
-        </p>
-        <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model with your values" id="dynamic-solved-equation-container">
-          <div id="dynamic-solved-equation">
-            <!-- Populated by JavaScript -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Card 2: Calculator -->
+      <!-- Card 1: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
-        <h4 class="card-title">Calculator Inputs</h4>
+        <h4 class="card-title">Implied Growth Rate Calculator</h4>
         <p class="equation-intro" style="margin-bottom: 1rem;">
           Enter your stock details below. The calculations and visualizations will update automatically as you change the values.
         </p>
         <div class="card-content">
-          <!-- Input controls -->
           <div class="input-section" id="data-entry" tabindex="-1">
             <p class="sr-only" id="inputHelp">
               Enter values and the calculator updates results and the chart automatically.
@@ -117,41 +66,44 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="market-price" class="input-label-inline">
-                  Market price <span style="color: #b95b1d;">(PV<sub>t</sub>)</span>:
+                  Market price (<span style="color: #b95b1d;">PV<sub><i>t</i></sub></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
-                  <input 
-                    type="number" 
-                    id="market-price" 
+                  <input
+                    type="number"
+                    id="market-price"
                     class="input-field-inline"
+                    inputmode="decimal"
                     min="1" max="500" step="0.1" value="100.0">
                 </div>
               </div>
 
               <div class="input-inline">
                 <label for="current-dividend" class="input-label-inline">
-                  Current dividend <span style="color: #3c6ae5;">(Div<sub>t</sub>)</span>:
+                  Current dividend (<span style="color: #3c6ae5;">Div<sub><i>t</i></sub></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
-                  <input 
-                    type="number" 
-                    id="current-dividend" 
+                  <input
+                    type="number"
+                    id="current-dividend"
                     class="input-field-inline"
+                    inputmode="decimal"
                     min="0" max="50" step="0.1" value="5.0">
                 </div>
               </div>
 
               <div class="input-inline">
                 <label for="required-return" class="input-label-inline">
-                  Required return <span style="color: #7a46ff;">(<i>r</i>)</span>:
+                  Required return (<span style="color: #7a46ff;"><i>r</i></span>):
                 </label>
                 <div class="input-with-suffix-inline">
-                  <input 
-                    type="number" 
-                    id="required-return" 
+                  <input
+                    type="number"
+                    id="required-return"
                     class="input-field-inline"
+                    inputmode="decimal"
                     min="0.1" max="25" step="0.1" value="7.0">
                   <span class="input-suffix-inline">%</span>
                 </div>
@@ -167,41 +119,53 @@
         </div>
       </section>
 
+      <!-- Card 2: Dynamic Equation -->
+      <section id="equation-card" class="card" style="min-height: 320px;">
+        <h4 class="card-title">Constant Dividend Growth Model Equation</h4>
+        <p class="equation-intro">Using your values, the equations become:</p>
+
+        <div class="equation-container" role="region" aria-label="Gordon Growth Model with your values" id="dynamic-equation-container">
+          <div id="dynamic-equation"><!-- Populated by JavaScript --></div>
+        </div>
+
+        <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
+          Solving for <span style="color: #15803d; font-style: italic;">g</span>:
+        </p>
+        <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model with your values" id="dynamic-solved-equation-container">
+          <div id="dynamic-solved-equation"><!-- Populated by JavaScript --></div>
+        </div>
+      </section>
+
       <!-- Card 3: Visualizer -->
       <section class="card" id="visualizer" tabindex="-1">
         <h4 class="card-title">Dividend Growth Projection</h4>
         <div class="card-content">
-          <!-- View toggle buttons -->
           <div class="view-controls">
-            <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
-              <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: #b95b1d;"></span>
-                Initial investment / Market price <span style="color: #b95b1d;">(PV<sub>t</sub>)</span>
-              </span>
-              <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                Dividend cash flow <span style="color: #3c6ae5;">(Div)</span>
-              </span>
-              <span class="legend-item" role="listitem">
-                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Dividend growth rate <span style="color: #15803d;">(<i>g</i>)</span>
-              </span>
+            <div id="chart-legend" role="region" aria-label="Chart legend">
+              <ul class="legend">
+                <li class="legend-item">
+                  <span class="legend-color" style="background-color: #b95b1d;"></span>
+                  Initial investment / Market price (<span style="color: #b95b1d;">PV<sub><i>t</i></sub></span>)
+                </li>
+                <li class="legend-item">
+                  <span class="legend-color" style="background-color: #3c6ae5;"></span>
+                  Dividend cash flow (<span style="color: #3c6ae5;">Div<sub><i>t</i></sub></span>)
+                </li>
+                <li class="legend-item">
+                  <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
+                  Dividend growth rate (<span style="color: #15803d;"><i>g</i></span>)
+                </li>
+              </ul>
             </div>
-            
-            <div class="button-group" role="group" aria-label="View mode - switch between chart and table">
-              <button id="chart-view-btn" class="toggle-btn active" aria-pressed="true">
-                Chart
-              </button>
-              <button id="table-view-btn" class="toggle-btn" aria-pressed="false">
-                Table
-              </button>
+
+            <div class="button-group" role="group" aria-label="Visualization view toggle">
+              <button id="chart-view-btn" class="toggle-btn active" aria-pressed="true">Chart</button>
+              <button id="table-view-btn" class="toggle-btn" aria-pressed="false">Table</button>
             </div>
           </div>
 
-          <!-- Screen reader announcement for view changes -->
           <div class="sr-only" aria-live="polite" aria-atomic="true" id="view-announcement"></div>
 
-          <!-- Hidden chart description -->
           <div class="sr-only" id="growth-chart-desc">
             <h4 id="growth-chart-title">Dividend growth projection over time</h4>
             <p>
@@ -211,16 +175,15 @@
               The dashed green line shows the growth rate percentage on the right axis.
             </p>
             <p>
-              Keyboard navigation: Tab to focus the chart. Use Left and Right arrow keys to move between years.
+              Keyboard navigation: Use Left and Right arrow keys to move between years.
               Press Home to jump to year 0, or End to jump to the final year.
               Each year will announce its dividend amount, growth rate, and total cash flow.
             </p>
           </div>
 
-          <!-- Chart container -->
-          <div id="chart-container" class="chart-wrapper" 
-               role="region" 
-               aria-labelledby="growth-chart-title" 
+          <div id="chart-container" class="chart-wrapper"
+               role="region"
+               aria-labelledby="growth-chart-title"
                aria-describedby="growth-chart-desc"
                tabindex="-1">
             <canvas id="growth-chart"></canvas>
@@ -229,9 +192,8 @@
             Note: Cash flows continue until infinity, but only the first 10 years are shown.
           </p>
 
-          <!-- Table container -->
           <div id="table-container" class="table-wrapper" style="display: none;"
-               role="region"  
+               role="region"
                aria-label="Dividend growth projection table">
             <table id="cash-flow-table" class="data-table" aria-label="Dividend growth projection table.">
               <!-- Populated by JavaScript -->
@@ -247,11 +209,10 @@
       <section class="card" id="results-card">
         <h4 class="card-title">Results and Analysis</h4>
         <div class="card-content">
-          <div id="results-content">
-            <!-- Populated by JavaScript -->
-          </div>
+          <div id="results-content"><!-- Populated by JavaScript --></div>
         </div>
       </section>
+
     </main>
   </div>
 

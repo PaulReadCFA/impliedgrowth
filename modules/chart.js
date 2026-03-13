@@ -44,10 +44,13 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
   canvas.setAttribute('aria-roledescription', 'interactive chart');
   canvas.setAttribute(
     'aria-label',
-    'Interactive dividend growth chart showing initial investment and projected dividend payments over 10 years. Press Tab to focus the chart, then use Left and Right arrow keys to navigate between years. Press Home to jump to year 0, or End to jump to the final year.'
+    'Interactive dividend growth chart showing initial investment and projected dividend payments over 10 years. Use Left and Right arrow keys to navigate between years once focused. Press Home to jump to year 0, or End to jump to the final year.'
   );
 
   const ctx = canvas.getContext('2d');
+  
+  // Respect reduced-motion preference for Chart.js animations
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
   // Prepare data for Chart.js
   const labels = cashFlows.map(cf => cf.year.toString());
@@ -112,6 +115,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
       ]
     },
     options: {
+      animation: prefersReducedMotion ? { duration: 0 } : { duration: 400 },
       responsive: true,
       maintainAspectRatio: false,
       interaction: {
@@ -154,15 +158,15 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
               
               // For year 0, show "Initial investment / Market price" with subscript t
               if (isInitialYear && context.dataset.label === 'Initial investment / Market price') {
-                return `Initial investment / Market price (PVₜ): ${formatCurrency(value, true)}`;
+                return `Initial investment / Market price (PV\u209C): ${formatCurrency(value, true)}`;
               }
               
               // Regular labels
               if (context.dataset.label === 'Initial investment / Market price') {
-                return `Initial investment / Market price: ${formatCurrency(value, true)}`;
+                return `Initial investment / Market price (PV\u209C): ${formatCurrency(value, true)}`;
               }
               if (context.dataset.label === 'Dividend cash flow') {
-                return `Dividend (Div): ${formatCurrency(value, true)}`;
+                return `Dividend (Div\u209C): ${formatCurrency(value, true)}`;
               }
               
               return `${context.dataset.label}: ${formatCurrency(value, true)}`;
@@ -186,11 +190,18 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             text: 'Years',
             color: '#000000',
             font: {
-              weight: '600'
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           ticks: {
-            color: '#000000'
+            color: '#000000',
+            font: {
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+            }
           },
           grid: {
             display: false
@@ -206,7 +217,9 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             text: 'Cash flows (USD)',
             color: '#000000',
             font: {
-              weight: '600'
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           position: 'left',
@@ -223,7 +236,12 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             color: '#000000',
             autoSkip: true,
             maxRotation: 0,
-            minRotation: 0
+            minRotation: 0,
+            font: {
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+            }
           },
           grid: {
             color: 'rgba(0, 0, 0, 0.05)'
@@ -239,8 +257,10 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             text: 'Dividend growth rate (g) %',
             color: COLORS.growth,
             font: {
+              size: 13,
               weight: '600',
-              style: 'normal'
+              style: 'italic',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           position: 'right',
@@ -254,7 +274,12 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             color: COLORS.growth,
             autoSkip: true,
             maxRotation: 0,
-            minRotation: 0
+            minRotation: 0,
+            font: {
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+            }
           },
           grid: {
             display: false
@@ -282,7 +307,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         
         const ctx = chart.ctx;
         ctx.save();
-        ctx.font = 'bold 11px sans-serif';
+        ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         ctx.fillStyle = '#000000'; // Same black as primary y-axis
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
@@ -349,7 +374,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         const centerX = (chartArea.left + chartArea.right) / 2;
         
         ctx.save();
-        ctx.font = 'italic 600 12px sans-serif';
+        ctx.font = "italic 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         
         // Draw g label (growth rate) - centered
         const gLabelText = `g = ${growthRate.toFixed(2)}%`;
@@ -535,7 +560,7 @@ function announceDataPoint(cashFlow, total, growthRate) {
   const announcement = `Year ${cashFlow.year}. ` +
     `Growth rate (g): ${growthRate ? formatPercentage(growthRate) : '0%'}. ` +
     `${investmentLabel}: ${formatCurrency(cashFlow.investment, true)}. ` +
-    `Dividend (Div): ${formatCurrency(cashFlow.dividend, true)}. ` +
+    `Dividend (Div\u209C): ${formatCurrency(cashFlow.dividend, true)}. ` +
     `Total: ${formatCurrency(total, true)}.`;
   
   liveRegion.textContent = announcement;

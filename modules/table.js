@@ -29,8 +29,8 @@ export function renderTable(cashFlows, growthRate) {
       <tr>
         <th scope="col" class="text-left">Year</th>
         <th scope="col" class="text-right">Dividend growth rate <span style="color: #047857;">(<i>g</i>)</span></th>
-        <th scope="col" class="text-right">Dividend <span style="color: #1e40af;">(Div)</span> (USD)</th>
-        <th scope="col" class="text-right">Initial investment / Market price <span style="color: #92400e;">(PV<sub>t</sub>)</span> (USD)</th>
+        <th scope="col" class="text-right">Dividend <span style="color: #1e40af;">(Div<sub><i>t</i></sub>)</span> (USD)</th>
+        <th scope="col" class="text-right">Initial investment / Market price <span style="color: #92400e;">(PV<sub><i>t</i></sub>)</span> (USD)</th>
         <th scope="col" class="text-right">Total Cash Flow (USD)</th>
         <th scope="col" class="text-right">Cumulative (USD)</th>
       </tr>
