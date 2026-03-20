@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Implied Growth Rate Calculator | CFA Institute</title>
   <meta name="description" content="Interactive implied growth rate calculator using the Gordon Growth Model">
-
+  
   <!-- Lato font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +14,8 @@
   <!-- Styles -->
   <link rel="stylesheet" href="cfa-base.css">
   <link rel="stylesheet" href="implied-growth-specific.css">
-
-  <!-- MathJax 2.7.7 -->
+  
+  <!-- MathJax 2.7.7 for dynamic equation rendering -->
   <script type="text/javascript" async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
@@ -31,25 +31,45 @@
       CommonHTML: { scale: 100, linebreaks: { automatic: true } },
       menuSettings: { inTabOrder: false }
     });
-
+    
     MathJax.Hub.Register.MessageHook("End Process", function () {
       document.querySelectorAll('.MathJax, .MathJax_CHTML, .mjx-chtml, [id*="MathJax"]')
         .forEach(function (el) { el.removeAttribute('tabindex'); });
     });
   </script>
-
-  <!-- Chart.js -->
+  
+  <!-- Chart.js for visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Iframe for static equation — borderless, no scrollbar, height set via postMessage */
+    #static-equation-iframe {
+      width: 100%;
+      border: none;
+      display: block;
+      min-height: 180px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <!-- Skip Links -->
+    <!-- Skip Links for Accessibility -->
     <nav role="navigation" aria-label="Skip links">
       <a href="#data-entry" class="skip-link">Skip to data entry</a>
       <a href="#table-view-btn" class="skip-link">Skip to data table</a>
     </nav>
-
+    
     <main class="content">
+
+      <!-- Card 0: Static Equation (iframe) -->
+      <section id="static-equation-card" class="card">
+        <iframe
+          id="static-equation-iframe"
+          src="static-equation.html"
+          title="Gordon Growth Model formula"
+          scrolling="no">
+        </iframe>
+      </section>
 
       <!-- Card 1: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
@@ -70,9 +90,9 @@
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
-                  <input
-                    type="number"
-                    id="market-price"
+                  <input 
+                    type="number" 
+                    id="market-price" 
                     class="input-field-inline"
                     inputmode="decimal"
                     min="1" max="500" step="0.1" value="100.0">
@@ -85,9 +105,9 @@
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
-                  <input
-                    type="number"
-                    id="current-dividend"
+                  <input 
+                    type="number" 
+                    id="current-dividend" 
                     class="input-field-inline"
                     inputmode="decimal"
                     min="0" max="50" step="0.1" value="5.0">
@@ -99,9 +119,9 @@
                   Required return (<span style="color: #7a46ff;"><i>r</i></span>):
                 </label>
                 <div class="input-with-suffix-inline">
-                  <input
-                    type="number"
-                    id="required-return"
+                  <input 
+                    type="number" 
+                    id="required-return" 
                     class="input-field-inline"
                     inputmode="decimal"
                     min="0.1" max="25" step="0.1" value="7.0">
@@ -122,17 +142,23 @@
       <!-- Card 2: Dynamic Equation -->
       <section id="equation-card" class="card" style="min-height: 320px;">
         <h4 class="card-title">Constant Dividend Growth Model Equation</h4>
-        <p class="equation-intro">Using your values, the equations become:</p>
-
+        <p class="equation-intro">
+          Using your values, the equations become:
+        </p>
+        
         <div class="equation-container" role="region" aria-label="Gordon Growth Model with your values" id="dynamic-equation-container">
-          <div id="dynamic-equation"><!-- Populated by JavaScript --></div>
+          <div id="dynamic-equation">
+            <!-- Populated by JavaScript -->
+          </div>
         </div>
-
+        
         <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
           Solving for <span style="color: #15803d; font-style: italic;">g</span>:
         </p>
         <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model with your values" id="dynamic-solved-equation-container">
-          <div id="dynamic-solved-equation"><!-- Populated by JavaScript --></div>
+          <div id="dynamic-solved-equation">
+            <!-- Populated by JavaScript -->
+          </div>
         </div>
       </section>
 
@@ -157,7 +183,7 @@
                 </li>
               </ul>
             </div>
-
+            
             <div class="button-group" role="group" aria-label="Visualization view toggle">
               <button id="chart-view-btn" class="toggle-btn active" aria-pressed="true">Chart</button>
               <button id="table-view-btn" class="toggle-btn" aria-pressed="false">Table</button>
@@ -174,17 +200,18 @@
               Then, at each subsequent year, dividend payments grow at the calculated implied growth rate.
               The dashed green line shows the growth rate percentage on the right axis.
             </p>
-            <p>
+            <!-- hidden: prevents screen readers stumbling on this when browsing the page;
+                 keyboard nav instructions are conveyed via the canvas aria-label only -->
+            <p hidden>
               Keyboard navigation: Use Left and Right arrow keys to move between years.
               Press Home to jump to year 0, or End to jump to the final year.
               Each year will announce its dividend amount, growth rate, and total cash flow.
             </p>
           </div>
 
-          <div id="chart-container" class="chart-wrapper"
-               role="region"
+          <div id="chart-container" class="chart-wrapper" 
+               role="region" 
                aria-labelledby="growth-chart-title"
-               aria-describedby="growth-chart-desc"
                tabindex="-1">
             <canvas id="growth-chart"></canvas>
           </div>
@@ -193,7 +220,7 @@
           </p>
 
           <div id="table-container" class="table-wrapper" style="display: none;"
-               role="region"
+               role="region"  
                aria-label="Dividend growth projection table">
             <table id="cash-flow-table" class="data-table" aria-label="Dividend growth projection table.">
               <!-- Populated by JavaScript -->
@@ -209,12 +236,24 @@
       <section class="card" id="results-card">
         <h4 class="card-title">Results and Analysis</h4>
         <div class="card-content">
-          <div id="results-content"><!-- Populated by JavaScript --></div>
+          <div id="results-content">
+            <!-- Populated by JavaScript -->
+          </div>
         </div>
       </section>
 
     </main>
   </div>
+
+  <!-- Auto-resize the static equation iframe when it reports its rendered height -->
+  <script>
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.type === 'iframeHeight') {
+        var iframe = document.getElementById('static-equation-iframe');
+        if (iframe) iframe.style.height = e.data.height + 'px';
+      }
+    });
+  </script>
 
   <!-- JavaScript Modules -->
   <script type="module" src="implied-growth-calculator.js"></script>

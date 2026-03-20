@@ -72,6 +72,19 @@ export function renderDynamicEquation(calculations, params) {
       originalContainer.style.visibility = 'visible';
       solvedContainer.style.visibility   = 'visible';
 
+      // Update the section's aria-label so screen readers immediately hear
+      // the result on first load — no input change required.
+      // This also stays current on every recalculation.
+      if (card) {
+        card.setAttribute('aria-label',
+          'Constant Dividend Growth Model Equation. ' +
+          'Implied growth rate result: ' + gFormatted + '. ' +
+          'Required return: ' + rFormatted + '. ' +
+          'Current dividend: ' + divtFormatted + '. ' +
+          'Market price: ' + pvtFormatted + '.'
+        );
+      }
+
       if (card) {
         // Release the hard height lock.
         card.style.height   = '';
