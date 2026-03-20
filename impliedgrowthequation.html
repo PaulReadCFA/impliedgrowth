@@ -59,20 +59,19 @@
     }
   </style>
 
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      MathML: {
-        extensions: ["content-mathml.js"]
-      },
-      "HTML-CSS": {
-        scale: 100,
-        linebreaks: { automatic: true }
-      },
-      showProcessingMessages: false,
-      messageStyle: "none",
-      showMathMenu: false,
-      skipStartupTypeset: false
-    });
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    MathML: {
+      extensions: ["content-mathml.js"]
+    },
+    "HTML-CSS": {
+      scale: 100,
+      linebreaks: { automatic: true }
+    },
+    showProcessingMessages: false,
+    messageStyle: "none",
+    skipStartupTypeset: false
+  });
 
     function removeMathJaxTabindex() {
       document.querySelectorAll(".MathJax, .MathJax_Display, [id^='MathJax-']").forEach(function (el) {
