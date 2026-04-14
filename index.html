@@ -65,26 +65,32 @@
       <!-- Card 1: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
         <h4 class="card-title">Implied Growth Rate Calculator</h4>
-        <p class="equation-intro" style="margin-bottom: 1rem;">
-          Enter your stock details below. The calculations and visualizations will update automatically as you change the values.
-        </p>
         <div class="card-content">
+          <p class="equation-intro">
+            Enter your stock details below. The calculations and visualizations will update automatically as you change the values.
+          </p>
           <div class="input-section" id="data-entry" tabindex="-1">
             <p class="sr-only" id="inputHelp">
               Enter values and the calculator updates results and the chart automatically.
             </p>
 
+            <!-- Validation summary -->
+            <div id="validation-summary" class="validation-summary" role="alert" style="display: none;">
+              <div class="validation-title">Please correct the following:</div>
+              <ul id="validation-list"></ul>
+            </div>
+
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="market-price" class="input-label-inline">
-                  Market price (<span style="color: #b95b1d;">PV<sub><i>t</i></sub></span>):
+                  Market price (<span style="color: #b95b1d;">PV</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
                   <input 
                     type="number" 
                     id="market-price" 
-                    class="input-field-inline"
+                    class="input-field-inline input-with-prefix"
                     inputmode="decimal"
                     min="1" max="500" step="0.1" value="100.0">
                 </div>
@@ -92,14 +98,14 @@
 
               <div class="input-inline">
                 <label for="current-dividend" class="input-label-inline">
-                  Current dividend (<span style="color: #3c6ae5;">Div<sub><i>t</i></sub></span>):
+                  Current dividend (<span style="color: #3c6ae5;">Div</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
                   <input 
                     type="number" 
                     id="current-dividend" 
-                    class="input-field-inline"
+                    class="input-field-inline input-with-prefix"
                     inputmode="decimal"
                     min="0" max="50" step="0.1" value="5.0">
                 </div>
@@ -120,12 +126,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Validation summary -->
-            <div id="validation-summary" class="validation-summary" role="alert" style="display: none;">
-              <div class="validation-title">Please correct the following:</div>
-              <ul id="validation-list"></ul>
-            </div>
           </div>
         </div>
       </section>
@@ -143,7 +143,7 @@
           </div>
         </div>
         
-        <p class="equation-intro" style="text-align: left; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 400;">
+        <p class="equation-intro equation-intro-tight">
           Solving for <span style="color: #15803d; font-style: italic;">g</span>:
         </p>
         <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model with your values" id="dynamic-solved-equation-container">
@@ -162,15 +162,15 @@
               <ul class="legend">
                 <li class="legend-item">
                   <span class="legend-color" style="background-color: #b95b1d;"></span>
-                  Initial investment / Market price (<span style="color: #b95b1d;">PV<sub><i>t</i></sub></span>)
+                  <span class="legend-item-label">Initial investment / Market price (<span style="color: #b95b1d;">PV</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>)</span>
                 </li>
                 <li class="legend-item">
                   <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                  Dividend cash flow (<span style="color: #3c6ae5;">Div<sub><i>t</i></sub></span>)
+                  <span class="legend-item-label">Dividend cash flow (<span style="color: #3c6ae5;">Div</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>)</span>
                 </li>
                 <li class="legend-item">
                   <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                  Dividend growth rate (<span style="color: #15803d;"><i>g</i></span>)
+                  <span class="legend-item-label">Dividend growth rate (<span style="color: #15803d;"><i>g</i></span>)</span>
                 </li>
               </ul>
             </div>

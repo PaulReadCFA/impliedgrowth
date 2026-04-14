@@ -15,6 +15,12 @@
   overflow: hidden !important;
 }
 
+/* Second intro line above solved equation — tighter vertical rhythm */
+.equation-intro-tight {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 /* ==========================================================================
    1. IMPLIED GROWTH SPECIFIC COLOR ASSIGNMENTS
    Unified color scheme across all calculators:
@@ -52,19 +58,27 @@
 }
 
 .result-title.growth-rate {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-green-data);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .result-title.consistency {
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--color-orange-darker);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .result-title.model-info {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-purple-bold);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .result-value {
@@ -124,6 +138,14 @@
   line-height: 1.4;
 }
 
+/* Chart legend: .legend-item is inline-flex + align-items:center, which vertically
+   centers each flex item and flattens <sub>. Wrapping copy in .legend-item-label
+   keeps PV/Div + subscript in normal inline layout. */
+#chart-legend .legend-item-label {
+  display: inline-block;
+  max-width: 100%;
+}
+
 /* ==========================================================================
    3. INPUT LAYOUT — Inline with Prefix/Suffix
    ========================================================================== */
@@ -165,13 +187,32 @@
   font-size: 1rem;
   text-align: right;
   box-sizing: border-box;
+  min-height: 44px;
+}
+
+/* Inset % — room for absolute suffix (matches cfa-base / other EEs). */
+.input-with-suffix-inline .input-field-inline:has(+ .input-suffix-inline) {
+  padding-right: 1.5rem;
+}
+
+#required-return.input-field-inline {
+  padding-right: 2.5rem;
+}
+
+.input-field-inline.input-with-prefix {
+  padding-left: 2.5rem;
 }
 
 .input-prefix-inline {
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-gray-500);
   font-weight: 500;
   font-size: 1rem;
-  margin-right: 0.25rem;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .input-suffix-inline {
@@ -187,9 +228,15 @@
   font-weight: 500;
 }
 
-/* When we have a prefix, adjust the input padding */
-.input-with-suffix-inline .input-prefix-inline ~ .input-field-inline {
-  padding-left: 0.5rem;
+#calculator .input-section {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+#calculator .validation-summary {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 @media (max-width: 640px) {
@@ -201,15 +248,24 @@
   
   .input-inline {
     width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
+    white-space: normal;
+    align-items: flex-start;
+    box-sizing: border-box;
   }
   
   .input-with-suffix-inline {
     width: 100%;
-    max-width: 12rem;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .input-label-inline {
-    min-width: auto;
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+    white-space: normal;
   }
 }
 
