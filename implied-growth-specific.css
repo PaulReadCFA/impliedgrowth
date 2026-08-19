@@ -411,3 +411,12 @@ math {
     padding: 0.25rem 0.3rem;
   }
 }
+
+/* Extra padding so spinner does not clash with % suffix */
+#required-return.input-field-inline {
+  padding-right: 2.5rem;
+}
+
+#required-return ~ .input-suffix-inline {
+  right: 1.5rem;
+}

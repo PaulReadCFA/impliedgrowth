@@ -398,6 +398,7 @@ function setupResizeListener() {
 function handleResponsiveView() {
   const chartBtn = $('#chart-view-btn');
   const tableBtn = $('#table-view-btn');
+  const helper = $('#chart-helper-text');
   const viewportWidth = window.innerWidth;
   
   // At very narrow widths (< 600px), force table view and disable chart button
@@ -406,24 +407,29 @@ function handleResponsiveView() {
       switchView('table');
     }
     
-    // Disable chart button
     if (chartBtn) {
       chartBtn.disabled = true;
       chartBtn.setAttribute('aria-disabled', 'true');
-      chartBtn.title = 'Chart view not available at this screen size';
+      chartBtn.setAttribute('aria-describedby', 'chart-helper-text');
+      chartBtn.removeAttribute('title');
     }
     if (tableBtn) {
       tableBtn.disabled = false;
       tableBtn.removeAttribute('aria-disabled');
-      tableBtn.title = '';
+      tableBtn.removeAttribute('title');
     }
+    if (helper) helper.style.display = 'block';
   } else {
-    // Re-enable chart button at wider widths
     if (chartBtn) {
       chartBtn.disabled = false;
       chartBtn.removeAttribute('aria-disabled');
-      chartBtn.title = '';
+      chartBtn.removeAttribute('aria-describedby');
+      chartBtn.removeAttribute('title');
     }
+    if (tableBtn) {
+      tableBtn.removeAttribute('title');
+    }
+    if (helper) helper.style.display = 'none';
   }
 }
 
