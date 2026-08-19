@@ -11,6 +11,17 @@
 
 import { formatCurrency, formatPercentage } from './utils.js';
 
+
+/** Curriculum chart label convention: 13px / 600 / Lato */
+const CHART_FONT = {
+  family: "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  size: 13,
+  weight: '600'
+};
+const CHART_FONT_CSS = `${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+const CHART_FONT_ITALIC_CSS = `italic ${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+
+
 // Unified color scheme
 const COLORS = {
   price: '#b95b1d',       // Orange - Market price (PV₀)
@@ -192,7 +203,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           ticks: {
@@ -200,7 +211,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           grid: {
@@ -219,7 +230,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           position: 'left',
@@ -240,7 +251,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           grid: {
@@ -260,7 +271,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
               size: 13,
               weight: '600',
               style: 'italic',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           position: 'right',
@@ -278,7 +289,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           grid: {
@@ -307,7 +318,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         
         const ctx = chart.ctx;
         ctx.save();
-        ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_CSS;
         ctx.fillStyle = '#000000'; // Same black as primary y-axis
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
@@ -374,7 +385,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         const centerX = (chartArea.left + chartArea.right) / 2;
         
         ctx.save();
-        ctx.font = "italic 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_ITALIC_CSS;
         
         // Draw g label (growth rate) - centered
         const gLabelText = `g = ${growthRate.toFixed(2)}%`;
