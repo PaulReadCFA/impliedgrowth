@@ -19,7 +19,17 @@ const CHART_FONT = {
   weight: '600'
 };
 const CHART_FONT_CSS = `${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
-const CHART_FONT_ITALIC_CSS = `italic ${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+
+/** Variables are italicised by the Unicode math-italic glyph, not by font-style. */
+const ITALIC_g = '\u{1D454}'; // 𝑔
+
+/** In pill labels only the variable carries colour; the operator and value stay neutral. */
+const LABEL_TEXT_COLOR = '#374151';
+
+/** Shared pill geometry so every label box has the same breathing space. */
+const LABEL_PAD_X = 8;
+const LABEL_PAD_Y = 5;
+const LABEL_BOX_HEIGHT = CHART_FONT.size + LABEL_PAD_Y * 2;
 
 
 // Unified color scheme
@@ -265,14 +275,9 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         y2: {
           title: {
             display: true,
-            text: 'Dividend growth rate (g) %',
+            text: `Dividend growth rate (${ITALIC_g}) %`,
             color: COLORS.growth,
-            font: {
-              size: 13,
-              weight: '600',
-              style: 'italic',
-              family: CHART_FONT.family
-            }
+            font: CHART_FONT
           },
           position: 'right',
           min: 0,
@@ -385,14 +390,16 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         const centerX = (chartArea.left + chartArea.right) / 2;
         
         ctx.save();
-        ctx.font = CHART_FONT_ITALIC_CSS;
+        ctx.font = CHART_FONT_CSS;
         
         // Draw g label (growth rate) - centered
-        const gLabelText = `g = ${growthRate.toFixed(2)}%`;
-        const gTextWidth = ctx.measureText(gLabelText).width;
-        const padding = 6;
-        const boxWidth = gTextWidth + padding * 2;
-        const boxHeight = 20;
+        const gVarText = ITALIC_g;
+        const gValueText = ` = ${growthRate.toFixed(2)}%`;
+        const gVarWidth = ctx.measureText(gVarText).width;
+        const gValueWidth = ctx.measureText(gValueText).width;
+        const gTextWidth = gVarWidth + gValueWidth;
+        const boxWidth = gTextWidth + LABEL_PAD_X * 2;
+        const boxHeight = LABEL_BOX_HEIGHT;
         
         // Position g label at center of the line
         const gPoint = meta.data[Math.floor(meta.data.length / 2)];
@@ -408,11 +415,16 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
         ctx.lineWidth = 2;
         ctx.strokeRect(gBoxX, gBoxY, boxWidth, boxHeight);
         
-        // Green text
-        ctx.fillStyle = COLORS.growth;
-        ctx.textAlign = 'center';
+        // Green variable, neutral operator and value
+        const textY = gBoxY + boxHeight / 2;
+        let textX = centerX - gTextWidth / 2;
+        ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(gLabelText, centerX, gBoxY + boxHeight / 2);
+        ctx.fillStyle = COLORS.growth;
+        ctx.fillText(gVarText, textX, textY);
+        textX += gVarWidth;
+        ctx.fillStyle = LABEL_TEXT_COLOR;
+        ctx.fillText(gValueText, textX, textY);
         
         ctx.restore();
       }
