@@ -3,7 +3,7 @@
  * Renders accessible data table for dividend growth projections
  */
 
-import { $, formatNumber, formatPercentage, announceToScreenReader } from './utils.js';
+import { $, formatNumber, formatPercentage, announceToScreenReader, applyTableRoles } from './utils.js';
 
 /**
  * Render cash flow table
@@ -28,9 +28,9 @@ export function renderTable(cashFlows, growthRate) {
     <thead>
       <tr>
         <th scope="col" class="text-left">Year</th>
-        <th scope="col" class="text-right">Dividend growth rate <span style="color: #047857;">(<i>g</i>)</span></th>
-        <th scope="col" class="text-right">Dividend (<span style="color: #1e40af;">Div</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>) (USD)</th>
-        <th scope="col" class="text-right">Initial investment / Market price (<span style="color: #92400e;">PV</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>) (USD)</th>
+        <th scope="col" class="text-right table-var-5">Dividend growth rate (𝑔)</th>
+        <th scope="col" class="text-right table-var-2">Dividend (Div<sub>𝑡</sub>) (USD)</th>
+        <th scope="col" class="text-right table-var-6">Initial investment / Market price (PV<sub>𝑡</sub>) (USD)</th>
         <th scope="col" class="text-right">Total Cash Flow (USD)</th>
         <th scope="col" class="text-right">Cumulative (USD)</th>
       </tr>
@@ -38,18 +38,18 @@ export function renderTable(cashFlows, growthRate) {
 
     <tbody>`;
 
-  // Add a row for every cash-flow
-  cashFlows.forEach((cf, index) => {
-    const isInitial = index === 0;
-
+  // data-label mirrors the column header: it becomes the visible label when the
+  // shared base reflows each row into a card below 768px. cell-value keeps the
+  // value as a single element so it stays on the right of that label.
+  cashFlows.forEach((cf) => {
     html += `
       <tr>
-        <td class="text-left">${cf.year}</td>
-        <td class="text-right" style="color: #047857;">${formatPercentage(growthRate)}</td>
-        <td class="text-right" style="color: #1e40af;">${formatNumber(cf.dividend)}</td>
-        <td class="text-right" style="color: #92400e;">${formatNumber(cf.investment)}</td>
-        <td class="text-right"><strong>${formatNumber(cf.totalCashFlow)}</strong></td>
-        <td class="text-right"><strong>${formatNumber(cf.cumulativeCashFlow)}</strong></td>
+        <th scope="row" class="text-left" data-label="Year">${cf.year}</th>
+        <td class="text-right" data-label="Dividend growth rate (𝑔)"><span class="cell-value table-var-5">${formatPercentage(growthRate)}</span></td>
+        <td class="text-right" data-label="Dividend (Div𝑡) (USD)"><span class="cell-value table-var-2">${formatNumber(cf.dividend)}</span></td>
+        <td class="text-right" data-label="Initial investment / Market price (PV𝑡) (USD)"><span class="cell-value table-var-6">${formatNumber(cf.investment)}</span></td>
+        <td class="text-right" data-label="Total Cash Flow (USD)"><span class="cell-value"><strong>${formatNumber(cf.totalCashFlow)}</strong></span></td>
+        <td class="text-right" data-label="Cumulative (USD)"><span class="cell-value"><strong>${formatNumber(cf.cumulativeCashFlow)}</strong></span></td>
       </tr>`;
   });
 
@@ -59,9 +59,7 @@ export function renderTable(cashFlows, growthRate) {
 
   // Inject the HTML
   table.innerHTML = html;
-
-  // Add accessibility attributes
-  table.setAttribute('aria-label', 'Dividend growth projection table.');
+  applyTableRoles(table);
 
   // Announce to screen-reader users
   announceToScreenReader('Table view loaded with dividend projections.');

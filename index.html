@@ -83,7 +83,7 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="market-price" class="input-label-inline">
-                  Market price (<span style="color: #b95b1d;">PV</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>):
+                  Market price (<span class="label-var-price">PV<sub>𝑡</sub></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -98,7 +98,7 @@
 
               <div class="input-inline">
                 <label for="current-dividend" class="input-label-inline">
-                  Current dividend (<span style="color: #3c6ae5;">Div</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>):
+                  Current dividend (<span class="label-var-dividend">Div<sub>𝑡</sub></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -113,7 +113,7 @@
 
               <div class="input-inline">
                 <label for="required-return" class="input-label-inline">
-                  Required return (<span style="color: #7a46ff;"><i>r</i></span>):
+                  Required return (<span class="label-var-return">𝑟</span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
@@ -162,15 +162,15 @@
               <ul class="legend">
                 <li class="legend-item">
                   <span class="legend-color" style="background-color: #b95b1d;"></span>
-                  <span class="legend-item-label">Initial investment / Market price (<span style="color: #b95b1d;">PV</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>)</span>
+                  <span class="legend-item-label">Initial investment / Market price (<span style="color: #b95b1d;">PV<sub>𝑡</sub></span>)</span>
                 </li>
                 <li class="legend-item">
                   <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                  <span class="legend-item-label">Dividend cash flow (<span style="color: #3c6ae5;">Div</span><sub style="color: var(--color-gray-700);"><i>t</i></sub>)</span>
+                  <span class="legend-item-label">Dividend cash flow (<span style="color: #3c6ae5;">Div<sub>𝑡</sub></span>)</span>
                 </li>
                 <li class="legend-item">
                   <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                  <span class="legend-item-label">Dividend growth rate (<span style="color: #15803d;"><i>g</i></span>)</span>
+                  <span class="legend-item-label">Dividend growth rate (<span style="color: #15803d;">𝑔</span>)</span>
                 </li>
               </ul>
             </div>
@@ -209,20 +209,18 @@
                tabindex="-1">
             <canvas id="growth-chart"></canvas>
           </div>
-          <p class="table-note" id="chart-note" style="display: none;">
-            Note: Cash flows continue until infinity, but only the first 10 years are shown.
-          </p>
 
-          <div id="table-container" class="table-wrapper" style="display: none;"
-               role="region"  
-               aria-label="Dividend growth projection table">
-            <table id="cash-flow-table" class="data-table" aria-label="Dividend growth projection table.">
+          <div id="table-container" class="table-wrapper table-card-layout" style="display: none;"
+               role="region"
+               aria-label="Dividend growth projection table"
+               tabindex="0">
+            <table id="cash-flow-table" class="data-table">
               <!-- Populated by JavaScript -->
             </table>
-            <p class="table-note">
-              Note: Cash flows continue until infinity, but only the first 10 years are shown.
-            </p>
           </div>
+          <p class="table-note" id="horizon-note">
+            Note: Cash flows continue until infinity, but only the first 10 years are shown.
+          </p>
         </div>
       </section>
 

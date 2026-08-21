@@ -276,7 +276,6 @@ function switchView(view) {
   const chartContainer = $('#chart-container');
   const tableContainer = $('#table-container');
   const legend = $('#chart-legend');
-  const chartNote = $('#chart-note');
   
   // Update state
   setState({ viewMode: view });
@@ -292,7 +291,6 @@ function switchView(view) {
     chartContainer.style.display = 'block';
     tableContainer.style.display = 'none';
     legend.style.display = 'flex';
-    if (chartNote) chartNote.style.display = 'block';
     
     // Announce change
     announceToScreenReader('Chart view active');
@@ -307,7 +305,6 @@ function switchView(view) {
     tableContainer.style.display = 'block';
     chartContainer.style.display = 'none';
     legend.style.display = 'none';
-    if (chartNote) chartNote.style.display = 'none';
     
     // Announce change
     announceToScreenReader('Table view active');
