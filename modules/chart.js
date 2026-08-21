@@ -10,7 +10,7 @@
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
-import { getChartTypography } from '../chart-typography.js';
+import { getChartTypography, fillTightParenVar } from '../chart-typography.js';
 
 /** Curriculum chart label convention: 13px / 600 / Lato at the 18px design root. */
 const CHART_FONT = { family: '', size: 13, weight: '600' };
@@ -281,12 +281,7 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
           }
         },
         y2: {
-          title: {
-            display: true,
-            text: `Dividend growth rate (${ITALIC_g}) %`,
-            color: COLORS.growth,
-            font: CHART_FONT
-          },
+          title: { display: false },
           position: 'right',
           min: 0,
           max: growthRate ? Math.max(12, growthRate * 1.5) : 12,
@@ -317,13 +312,30 @@ export function renderChart(cashFlows, showLabels = true, growthRate = null) {
       layout: {
         padding: {
           left: 10,
-          right: 10,
+          right: 55,
           top: showLabels ? 35 : 25, // Extra space for r label
           bottom: 10
         }
       }
     },
     plugins: [{
+      id: 'verticalY2Title',
+      afterDraw: (chart) => {
+        const ctx = chart.ctx;
+        const chartArea = chart.chartArea;
+        ctx.save();
+        ctx.fillStyle = COLORS.growth;
+        ctx.font = CHART_FONT_CSS;
+        ctx.textBaseline = 'middle';
+        const x = chartArea.right + 48;
+        const y = (chartArea.top + chartArea.bottom) / 2;
+        ctx.translate(x, y);
+        ctx.rotate(Math.PI / 2);
+        fillTightParenVar(ctx, 'Dividend growth rate (', ITALIC_g, ') %', 0, 0, 'center');
+        ctx.restore();
+      }
+    },
+    {
       // Custom plugin to draw labels on top of stacked bars
       id: 'stackedBarLabels',
       afterDatasetsDraw: (chart) => {
