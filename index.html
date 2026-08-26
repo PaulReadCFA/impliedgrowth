@@ -63,8 +63,8 @@
 
   
       <!-- Card 1: Calculator -->
-      <section class="card" id="calculator" tabindex="-1">
-        <h4 class="card-title">Implied Growth Rate Calculator</h4>
+      <section class="card" id="calculator" tabindex="-1" aria-labelledby="calculator-title">
+        <h4 class="card-title" id="calculator-title">Implied Growth Rate Calculator</h4>
         <div class="card-content">
           <p class="equation-intro">
             Enter your stock details below. The calculations and visualizations will update automatically as you change the values.
@@ -131,11 +131,12 @@
       </section>
 
       <!-- Card 2: Dynamic Equation -->
-      <section id="equation-card" class="card" style="min-height: 320px;">
-        <h4 class="card-title">Constant Dividend Growth Model Equation</h4>
+      <section id="equation-card" class="card" aria-labelledby="equation-title" aria-describedby="equation-summary">
+        <h4 class="card-title" id="equation-title">Constant Dividend Growth Model Equation</h4>
         <p class="equation-intro">
           Using your values, the equations become:
         </p>
+        <p id="equation-summary" class="sr-only"></p>
         
         <div class="equation-container" role="region" aria-label="Gordon Growth Model with your values" id="dynamic-equation-container">
           <div id="dynamic-equation">
@@ -144,7 +145,7 @@
         </div>
         
         <p class="equation-intro equation-intro-tight">
-          Solving for <span style="color: #15803d; font-style: italic;">g</span>:
+          Solving for <span style="color: #07514F; font-style: italic;">g</span>:
         </p>
         <div class="equation-container" role="region" aria-label="Solved Gordon Growth Model with your values" id="dynamic-solved-equation-container">
           <div id="dynamic-solved-equation">
@@ -154,23 +155,23 @@
       </section>
 
       <!-- Card 3: Visualizer -->
-      <section class="card" id="visualizer" tabindex="-1">
-        <h4 class="card-title">Dividend Growth Projection</h4>
+      <section class="card" id="visualizer" tabindex="-1" aria-labelledby="visualizer-title">
+        <h4 class="card-title" id="visualizer-title">Dividend Growth Projection</h4>
         <div class="card-content">
           <div class="view-controls">
             <div id="chart-legend" role="region" aria-label="Chart legend">
               <ul class="legend">
                 <li class="legend-item">
-                  <span class="legend-color" style="background-color: #b95b1d;"></span>
-                  <span class="legend-item-label">Initial investment / Market price <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #b95b1d;">PV<sub>𝑡</sub></span><span class="legend-paren">)</span></span></span>
+                  <span class="legend-color legend-swatch-price"></span>
+                  <span class="legend-item-label">Initial investment / Market price <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-price">PV<sub>𝑡</sub></span><span class="legend-paren">)</span></span></span>
                 </li>
                 <li class="legend-item">
-                  <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                  <span class="legend-item-label">Dividend cash flow <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #3c6ae5;">Div<sub>𝑡</sub></span><span class="legend-paren">)</span></span></span>
+                  <span class="legend-color legend-swatch-dividend"></span>
+                  <span class="legend-item-label">Dividend cash flow <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-dividend">Div<sub>𝑡</sub></span><span class="legend-paren">)</span></span></span>
                 </li>
                 <li class="legend-item">
-                  <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #15803d; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                  <span class="legend-item-label">Dividend growth rate <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #15803d;">𝑔</span><span class="legend-paren">)</span></span></span>
+                  <span class="legend-color legend-dashed-line legend-line-growth"></span>
+                  <span class="legend-item-label">Dividend growth rate <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-growth">𝑔</span><span class="legend-paren">)</span></span></span>
                 </li>
               </ul>
             </div>
@@ -228,8 +229,8 @@
       </section>
 
       <!-- Card 4: Results & Analysis -->
-      <section class="card" id="results-card">
-        <h4 class="card-title">Results and Analysis</h4>
+      <section class="card" id="results-card" aria-labelledby="results-title">
+        <h4 class="card-title" id="results-title">Results and Analysis</h4>
         <div class="card-content">
           <div id="results-content">
             <!-- Populated by JavaScript -->

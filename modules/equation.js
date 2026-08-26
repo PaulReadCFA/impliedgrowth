@@ -5,10 +5,6 @@
 
 import { formatCurrency, formatPercentage } from './utils.js';
 
-// Track the tallest height the equation card has ever reached so it never
-// shrinks and causes a layout jump on subsequent recalculations.
-let equationCardMinHeight = 0;
-
 /**
  * Render dynamic equation with user's values
  * @param {Object} calculations - Growth calculations
@@ -39,22 +35,12 @@ export function renderDynamicEquation(calculations, params) {
   const pvtClean  = pvtFormatted.replace('USD', '\\text{USD}');
 
   // Original formula:  g = r - Div_t(1+g)/PV_t = result
-  const originalLatex = `\\color{#15803d}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+\\color{#15803d}{g})}{\\color{#b95b1d}{${pvtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  const originalLatex = `\\color{#07514F}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+\\color{#07514F}{g})}{\\color{#b95b1d}{${pvtClean}}} = \\color{#07514F}{\\mathbf{${gClean}}}`;
 
   // Solved formula:  g = (r·PV_t − Div_t) / (PV_t + Div_t) = result
-  const solvedLatex = `\\color{#15803d}{g} = \\frac{\\color{#7a46ff}{${rClean}} \\times \\color{#b95b1d}{${pvtClean}} - \\color{#3c6ae5}{${divtClean}}}{\\color{#b95b1d}{${pvtClean}} + \\color{#3c6ae5}{${divtClean}}} = \\color{#15803d}{\\mathbf{${gClean}}}`;
+  const solvedLatex = `\\color{#07514F}{g} = \\frac{\\color{#7a46ff}{${rClean}} \\times \\color{#b95b1d}{${pvtClean}} - \\color{#3c6ae5}{${divtClean}}}{\\color{#b95b1d}{${pvtClean}} + \\color{#3c6ae5}{${divtClean}}} = \\color{#07514F}{\\mathbf{${gClean}}}`;
 
-  // ─── Layout-shift prevention ───────────────────────────────────────────────
   const card = document.getElementById('equation-card');
-  const isFirstRender = originalContainer.offsetHeight === 0;
-
-  if (!isFirstRender && card) {
-    // Hard-lock the card at its current pixel height so nothing inside can
-    // push or pull surrounding content while MathJax is working.
-    const cardH = card.offsetHeight;
-    card.style.height   = cardH + 'px';
-    card.style.overflow = 'hidden';
-  }
 
   // Hide both containers so the raw LaTeX string is never user-visible.
   originalContainer.style.visibility = 'hidden';
@@ -72,42 +58,21 @@ export function renderDynamicEquation(calculations, params) {
       originalContainer.style.visibility = 'visible';
       solvedContainer.style.visibility   = 'visible';
 
-      // Update the section's aria-label so screen readers immediately hear
-      // the result on first load — no input change required.
-      // This also stays current on every recalculation.
-      if (card) {
-        card.setAttribute('aria-label',
-          'Constant Dividend Growth Model Equation. ' +
+      // Keep the visible card title as the accessible name and expose current
+      // values as its description.
+      const summary = document.getElementById('equation-summary');
+      if (summary) {
+        summary.textContent =
           'Implied growth rate result: ' + gFormatted + '. ' +
           'Required return: ' + rFormatted + '. ' +
           'Current dividend: ' + divtFormatted + '. ' +
-          'Market price: ' + pvtFormatted + '.'
-        );
+          'Market price: ' + pvtFormatted + '.';
       }
 
-      if (card) {
-        // Release the hard height lock.
-        card.style.height   = '';
-        card.style.overflow = '';
-
-        // Update the high-water mark: the card's min-height is always the
-        // tallest it has ever naturally rendered. This means small value
-        // changes (fewer digits → shorter equation) never cause the card to
-        // shrink, eliminating the residual few-pixel jump.
-        const renderedH = card.offsetHeight;
-        if (renderedH > equationCardMinHeight) {
-          equationCardMinHeight = renderedH;
-        }
-        card.style.minHeight = equationCardMinHeight + 'px';
-      }
     });
   } else {
     // MathJax unavailable — just show content.
     originalContainer.style.visibility = 'visible';
     solvedContainer.style.visibility   = 'visible';
-    if (card) {
-      card.style.height   = '';
-      card.style.overflow = '';
-    }
   }
 }

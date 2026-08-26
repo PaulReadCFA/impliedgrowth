@@ -4,15 +4,9 @@
    Requires: cfa-base.css
    ========================================================================== */
 
-/* Equation card: when JS locks the height during MathJax re-render, prevent
-   any visible snap by holding overflow hidden. The height lock itself is set
-   via inline style by equation.js; this rule just ensures clipping is instant. */
-#equation-card {
-  box-sizing: border-box;
-}
-
-#equation-card[style*="height"] {
-  overflow: hidden !important;
+/* Reserve each rendered equation's own space without locking the whole card. */
+#equation-card .equation-container {
+  min-height: 7.5rem;
 }
 
 /* Second intro line above solved equation — tighter vertical rhythm */
@@ -27,7 +21,7 @@
    - Orange #b95b1d: Present Value/Current Price (P₀)
    - Blue #3c6ae5: Periodic Payments (Dividends)
    - Purple #7a46ff: Rate of Return (r)
-   - Green #15803d: Growth Rates (g)
+   - Green #07514F: Growth Rates (g)
    - Teal #0079a6: Future Value
    ========================================================================== */
 :root {
@@ -35,7 +29,7 @@
   --color-growth-price: var(--color-orange-deep);       /* #b95b1d - Market price (P₀) */
   --color-growth-dividend: var(--color-blue-interactive); /* #3c6ae5 - Dividend payments (D) */
   --color-growth-return: var(--color-purple-bold);      /* #7a46ff - Required return (r) */
-  --color-growth-rate: var(--color-green-data);         /* #15803d - Growth rate (g) */
+  --color-growth-rate: var(--color-green-data);         /* #07514F - Growth rate (g) */
   --color-growth-future: var(--color-teal-data);        /* #0079a6 - Future value */
 }
 
@@ -153,6 +147,19 @@
 .label-var-price    { color: var(--color-growth-price); }
 .label-var-dividend { color: var(--color-growth-dividend); }
 .label-var-return   { color: var(--color-growth-return); }
+
+.legend-swatch-price { background-color: var(--color-growth-price); }
+.legend-swatch-dividend { background-color: var(--color-growth-dividend); }
+.legend-var-price { color: var(--color-growth-price); }
+.legend-var-dividend { color: var(--color-growth-dividend); }
+.legend-var-growth { color: var(--color-growth-rate); }
+.legend-line-growth {
+  width: 1.5rem;
+  height: 0;
+  background: none;
+  border: 0;
+  border-bottom: 2px dashed var(--color-growth-rate);
+}
 
 #calculator .input-section {
   max-width: 100%;

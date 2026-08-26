@@ -6,7 +6,7 @@
  * - Orange #b95b1d: Present Value/Current Price (PV₀)
  * - Blue #3c6ae5: Periodic Payments (Dividends)
  * - Purple #7a46ff: Rate of Return (r)
- * - Green #15803d: Growth Rates (g)
+ * - Green #07514F: Growth Rates (g)
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
@@ -44,7 +44,7 @@ const COLORS = {
   price: '#b95b1d',       // Orange - Market price (PV₀)
   dividend: '#3c6ae5',    // Blue - Dividends (D)
   return: '#7a46ff',      // Purple - Required return (r)
-  growth: '#15803d',      // Green - Growth rate (g)
+  growth: '#07514F',      // Green - Growth rate (g)
   darkText: '#06005a'
 };
 
