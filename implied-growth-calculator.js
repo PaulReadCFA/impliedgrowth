@@ -29,6 +29,13 @@ import { renderChart, shouldShowLabels, destroyChart } from './modules/chart.js'
 import { renderTable } from './modules/table.js';
 import { renderResults } from './modules/results.js';
 import { renderDynamicEquation } from './modules/equation.js';
+import { allFinite } from './validation-ui.js';
+import {
+  applyChartTableVisibility,
+  updateToggleButtonStates,
+  announceView,
+  VIEW_ANNOUNCEMENTS,
+} from './view-toggle.js';
 
 // =============================================================================
 // INITIALIZATION
@@ -189,6 +196,10 @@ function updateCalculations() {
       currentDividend,
       requiredReturn
     });
+    if (!allFinite(calculations.impliedGrowth)) {
+      setState({ growthCalculations: null });
+      return;
+    }
     
     // Validate financial logic
     const allErrors = validateAllInputs(state);
@@ -277,38 +288,23 @@ function switchView(view) {
   const tableContainer = $('#table-container');
   const legend = $('#chart-legend');
   
-  // Update state
+  const changed = state.viewMode !== view;
   setState({ viewMode: view });
-  
-  // Update button states
+  const forceTable = window.innerWidth < 600;
+  updateToggleButtonStates({ chartBtn, tableBtn, showingChart: view === 'chart', forceTable });
+  applyChartTableVisibility({
+    chartEl: chartContainer,
+    tableEl: tableContainer,
+    canvas: $('#growth-chart'),
+    showChart: view === 'chart',
+  });
+
   if (view === 'chart') {
-    chartBtn.classList.add('active');
-    chartBtn.setAttribute('aria-pressed', 'true');
-    tableBtn.classList.remove('active');
-    tableBtn.setAttribute('aria-pressed', 'false');
-    
-    // Show chart, hide table
-    chartContainer.style.display = 'block';
-    tableContainer.style.display = 'none';
-    legend.style.display = 'flex';
-    
-    // Announce change
-    announceToScreenReader('Chart view active');
-    
+    if (legend) legend.style.display = 'flex';
   } else {
-    tableBtn.classList.add('active');
-    tableBtn.setAttribute('aria-pressed', 'true');
-    chartBtn.classList.remove('active');
-    chartBtn.setAttribute('aria-pressed', 'false');
-    
-    // Show table, hide chart
-    tableContainer.style.display = 'block';
-    chartContainer.style.display = 'none';
-    legend.style.display = 'none';
-    
-    // Announce change
-    announceToScreenReader('Table view active');
+    if (legend) legend.style.display = 'none';
   }
+  if (changed) announceView(VIEW_ANNOUNCEMENTS[view]);
 }
 
 // =============================================================================
@@ -323,7 +319,7 @@ function handleStateChange(newState) {
   const { growthCalculations, viewMode } = newState;
   
   if (!growthCalculations) {
-    // Clear displays if no calculations
+    clearCalculatedViews();
     return;
   }
   
@@ -356,6 +352,16 @@ function handleStateChange(newState) {
     growthCalculations.cashFlows,
     growthCalculations.impliedGrowth
   );
+}
+
+function clearCalculatedViews() {
+  destroyChart();
+  const results = $('#results-content');
+  if (results) results.innerHTML = '';
+  const equation = $('#dynamic-mathml-equation');
+  if (equation) equation.innerHTML = '';
+  const table = $('#cash-flow-table');
+  if (table) table.innerHTML = '';
 }
 
 // =============================================================================
@@ -428,6 +434,12 @@ function handleResponsiveView() {
     }
     if (helper) helper.style.display = 'none';
   }
+  updateToggleButtonStates({
+    chartBtn,
+    tableBtn,
+    showingChart: state.viewMode === 'chart',
+    forceTable: viewportWidth < 600,
+  });
 }
 
 // =============================================================================
