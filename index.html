@@ -197,20 +197,19 @@
               Then, at each subsequent year, dividend payments grow at the calculated implied growth rate.
               The dashed green line shows the growth rate percentage on the right axis.
             </p>
-            <!-- hidden: prevents screen readers stumbling on this when browsing the page;
-                 keyboard nav instructions are conveyed via the canvas aria-label only -->
-            <p hidden>
-              Keyboard navigation: Use Left and Right arrow keys to move between years.
-              Press Home to jump to year 0, or End to jump to the final year.
-              Each year will announce its dividend amount, growth rate, and total cash flow.
-            </p>
           </div>
+          <p id="chart-keyboard-help" class="sr-only">
+            Use Left and Right arrow keys to move between years. Home moves to year 0 and End moves to the final year.
+          </p>
+          <p id="chart-point-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
 
           <div id="chart-container" class="chart-wrapper" 
                role="region" 
                aria-labelledby="growth-chart-title"
                tabindex="-1">
-            <canvas id="growth-chart"></canvas>
+            <canvas id="growth-chart" role="img"
+                    aria-labelledby="growth-chart-title"
+                    aria-describedby="growth-chart-desc chart-keyboard-help"></canvas>
           </div>
 
           <div id="table-container" class="table-wrapper table-card-layout" style="display: none;"
