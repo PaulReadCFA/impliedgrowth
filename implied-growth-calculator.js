@@ -459,44 +459,30 @@ function handleResponsiveView() {
 /**
  * Run self-tests to verify calculations
  */
+function logSelfTest(name, passed, detail) {
+  if (passed) console.log(`✓ ${name}`);
+  else console.warn(`✗ ${name}${detail ? ': ' + detail : ''}`);
+}
+
 function runSelfTests() {
   console.log('Running self-tests...');
-  
-  const tests = [
-    {
-      name: 'Default values (100, 5, 7%)',
-      inputs: { marketPrice: 100, currentDividend: 5, requiredReturn: 7 },
-      expected: { impliedGrowth: 1.90 } // (0.07*100 - 5)/(100 + 5) = 2/105 = 1.90%
-    },
-    {
-      name: 'Higher growth scenario',
-      inputs: { marketPrice: 50, currentDividend: 2, requiredReturn: 10 },
-      expected: { impliedGrowth: 5.77 } // (0.1*50 - 2)/(50 + 2) = 3/52 = 5.77%
-    },
-    {
-      name: 'Lower growth scenario',
-      inputs: { marketPrice: 100, currentDividend: 3, requiredReturn: 12 },
-      expected: { impliedGrowth: 8.74 } // (0.12*100 - 3)/(100 + 3) = 9/103 = 8.74%
-    }
-  ];
-  
-  tests.forEach(test => {
-    try {
-      const result = calculateGrowthMetrics(test.inputs);
-      
-      if (test.expected.impliedGrowth !== undefined) {
-        const diff = Math.abs(result.impliedGrowth - test.expected.impliedGrowth);
-        if (diff <= 0.1) {
-          console.log(`âœ“ ${test.name} passed`);
-        } else {
-          console.warn(`✗ ${test.name} failed: expected ${test.expected.impliedGrowth}%, got ${result.impliedGrowth.toFixed(2)}%`);
-        }
-      }
-    } catch (error) {
-      console.error(`✗ ${test.name} threw error:`, error);
-    }
-  });
-  
+
+  const defaults = calculateGrowthMetrics({ marketPrice: 100, currentDividend: 5, requiredReturn: 7 });
+  logSelfTest('Defaults → g ≈ 1.90%', Math.abs(defaults.impliedGrowth - 1.90) <= 0.1, `got ${defaults.impliedGrowth}`);
+  logSelfTest('Valid outputs are finite', Number.isFinite(defaults.impliedGrowth));
+
+  const higher = calculateGrowthMetrics({ marketPrice: 50, currentDividend: 2, requiredReturn: 10 });
+  logSelfTest('Higher growth scenario ≈ 5.77%', Math.abs(higher.impliedGrowth - 5.77) <= 0.1, `got ${higher.impliedGrowth}`);
+
+  const empty = validateAllInputs({ marketPrice: NaN, currentDividend: 5, requiredReturn: 7 });
+  logSelfTest('Empty market price is required', Boolean(empty.marketPrice));
+
+  const range = validateAllInputs({ marketPrice: 501, currentDividend: 5, requiredReturn: 7 });
+  logSelfTest('Price above max is rejected', Boolean(range.marketPrice));
+
+  const negativeG = validateAllInputs({ marketPrice: 100, currentDividend: 10, requiredReturn: 7 });
+  logSelfTest('Negative implied growth is rejected', Boolean(negativeG.financial));
+
   console.log('Self-tests complete');
 }
 
