@@ -62,15 +62,16 @@
 .result-title.consistency {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-orange-darker);
+  color: var(--color-orange-contrast);
   letter-spacing: normal;
   text-transform: none;
 }
 
+/* Sits on the Purple 10% tint — tint-safe family from cfa-base. */
 .result-title.model-info {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-purple-bold);
+  color: var(--color-purple-contrast);
   letter-spacing: normal;
   text-transform: none;
 }
@@ -121,7 +122,7 @@
 
 .consistency-warning-title {
   font-weight: 600;
-  color: var(--color-orange-darker);
+  color: var(--color-orange-contrast);
   margin-bottom: 0.375rem;
   font-size: 1rem;
 }
@@ -290,4 +291,14 @@ math {
 .model-info-list li strong {
   font-weight: 600;
   color: var(--color-gray-800);
+}
+
+/* This list sits on the Purple 10% tint, where --var-* hues drop below AA.
+   Variable letters switch to the shared tint-safe family. */
+.result-box.model-info .label-var-dividend {
+  color: var(--color-blue-contrast);
+}
+
+.model-info-list li sub {
+  color: var(--color-gray-700);
 }

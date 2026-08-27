@@ -90,7 +90,7 @@ function createModelInfoBox(calculations, params) {
   const items = [
     { label: 'Required return (<i>r</i>)', value: formatPercentage(params.requiredReturn) },
     { label: 'Implied growth (<i>g</i>)', value: formatPercentage(calculations.impliedGrowth) },
-    { label: 'Expected next dividend (<span style="color: #3c6ae5;">Div</span><sub style="color: var(--color-gray-700);">𝑡+1</sub>)', value: formatCurrency(calculations.expectedD1) }
+    { label: 'Expected next dividend (<span class="label-var-dividend">Div</span><sub>𝑡+1</sub>)', value: formatCurrency(calculations.expectedD1) }
   ];
   
   items.forEach(item => {
