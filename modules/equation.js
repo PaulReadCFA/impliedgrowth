@@ -1,9 +1,10 @@
 /**
  * Dynamic Equation Module
- * Renders Gordon Growth Model equation with actual calculated values using MathJax
+ * Renders Gordon Growth Model equations as native MathML.
  */
 
-import { formatCurrency, formatPercentage } from './utils.js';
+import { formatCurrency, formatCurrencySpeech, formatPercentage } from './utils.js';
+import { renderEquationGroup } from '../equation-render.js';
 
 /**
  * Render dynamic equation with user's values
@@ -28,51 +29,69 @@ export function renderDynamicEquation(calculations, params) {
   const divtFormatted = formatCurrency(currentDividend);
   const pvtFormatted  = formatCurrency(marketPrice);
 
-  // Escape special characters in formatted values
-  const rClean    = rFormatted.replace('%', '\\%');
-  const gClean    = gFormatted.replace('%', '\\%');
-  const divtClean = divtFormatted.replace('USD', '\\text{USD}').replace('−', '-');
-  const pvtClean  = pvtFormatted.replace('USD', '\\text{USD}');
+  const percentMath = (value, color, bold = false) =>
+    `<mstyle mathcolor="${color}"${bold ? ' mathvariant="bold"' : ''}>` +
+      `<mn>${value.replace('%', '')}</mn><mo>%</mo>` +
+    `</mstyle>`;
 
-  // Original formula:  g = r - Div_t(1+g)/PV_t = result
-  const originalLatex = `\\color{#07514F}{g} = \\color{#7a46ff}{${rClean}} - \\frac{\\color{#3c6ae5}{${divtClean}}(1+\\color{#07514F}{g})}{\\color{#b95b1d}{${pvtClean}}} = \\color{#07514F}{\\mathbf{${gClean}}}`;
+  const originalMathML = `<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <mrow>
+      <mi mathcolor="#07514F">g</mi><mo>=</mo>
+      ${percentMath(rFormatted, '#7A46FF')}
+      <mo>&#x2212;</mo>
+      <mfrac>
+        <mrow>
+          <mtext mathcolor="#3C6AE5">${divtFormatted}</mtext>
+          <mo>&#x2062;</mo>
+          <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#07514F">g</mi><mo>)</mo></mrow>
+        </mrow>
+        <mtext mathcolor="#B95B1D">${pvtFormatted}</mtext>
+      </mfrac>
+      <mo>=</mo>${percentMath(gFormatted, '#07514F', true)}
+    </mrow>
+  </math>`;
 
-  // Solved formula:  g = (r·PV_t − Div_t) / (PV_t + Div_t) = result
-  const solvedLatex = `\\color{#07514F}{g} = \\frac{\\color{#7a46ff}{${rClean}} \\times \\color{#b95b1d}{${pvtClean}} - \\color{#3c6ae5}{${divtClean}}}{\\color{#b95b1d}{${pvtClean}} + \\color{#3c6ae5}{${divtClean}}} = \\color{#07514F}{\\mathbf{${gClean}}}`;
+  const solvedMathML = `<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+    <mrow>
+      <mi mathcolor="#07514F">g</mi><mo>=</mo>
+      <mfrac>
+        <mrow>
+          ${percentMath(rFormatted, '#7A46FF')}
+          <mo>&#x00D7;</mo>
+          <mtext mathcolor="#B95B1D">${pvtFormatted}</mtext>
+          <mo>&#x2212;</mo>
+          <mtext mathcolor="#3C6AE5">${divtFormatted}</mtext>
+        </mrow>
+        <mrow>
+          <mtext mathcolor="#B95B1D">${pvtFormatted}</mtext>
+          <mo>+</mo>
+          <mtext mathcolor="#3C6AE5">${divtFormatted}</mtext>
+        </mrow>
+      </mfrac>
+      <mo>=</mo>${percentMath(gFormatted, '#07514F', true)}
+    </mrow>
+  </math>`;
 
-  const card = document.getElementById('equation-card');
-
-  // Hide both containers so the raw LaTeX string is never user-visible.
-  originalContainer.style.visibility = 'hidden';
-  solvedContainer.style.visibility   = 'hidden';
-
-  // Write raw LaTeX (invisible at this point).
-  originalContainer.textContent = '$$' + originalLatex + '$$';
-  solvedContainer.textContent   = '$$' + solvedLatex   + '$$';
-
-  if (window.MathJax && window.MathJax.Hub) {
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, originalContainer]);
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, solvedContainer]);
-    MathJax.Hub.Queue(function () {
-      // Reveal rendered math.
-      originalContainer.style.visibility = 'visible';
-      solvedContainer.style.visibility   = 'visible';
-
+  // The shared mount holds each equation's height and hides the source MathML
+  // while MathJax typesets, so the cards below stay put.
+  renderEquationGroup(
+    [
+      { mount: originalContainer, markup: originalMathML },
+      { mount: solvedContainer, markup: solvedMathML },
+    ],
+    {
       // Keep the visible card title as the accessible name and expose current
       // values as its description.
-      const summary = document.getElementById('equation-summary');
-      if (summary) {
-        summary.textContent =
-          'Implied growth rate result: ' + gFormatted + '. ' +
-          'Required return: ' + rFormatted + '. ' +
-          'Current dividend: ' + divtFormatted + '. ' +
-          'Market price: ' + pvtFormatted + '.';
-      }
-
-    });
-  } else {
-    // MathJax unavailable — just show content.
-    originalContainer.style.visibility = 'visible';
-    solvedContainer.style.visibility   = 'visible';
-  }
+      onTypeset: () => {
+        const summary = document.getElementById('equation-summary');
+        if (summary) {
+          summary.textContent =
+            'Implied growth rate result: ' + gFormatted + '. ' +
+            'Required return: ' + rFormatted + '. ' +
+            'Current dividend: ' + formatCurrencySpeech(currentDividend) + '. ' +
+            'Market price: ' + formatCurrencySpeech(marketPrice) + '.';
+        }
+      },
+    }
+  );
 }

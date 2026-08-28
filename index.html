@@ -15,28 +15,18 @@
   <link rel="stylesheet" href="cfa-base.css">
   <link rel="stylesheet" href="implied-growth-specific.css">
   
-  <!-- MathJax 2.7.7 for dynamic equation rendering -->
-  <script type="text/javascript" async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-  </script>
+  <!-- MathJax 2.7.7: native MathML source + Explorer/AssistiveMML. -->
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-      tex2jax: {
-        inlineMath: [['$','$'], ['\\(','\\)']],
-        displayMath: [['$$','$$'], ['\\[','\\]']],
-        processEscapes: true
-      },
+      MathML: { extensions: ["content-mathml.js"] },
       "HTML-CSS": { scale: 100, linebreaks: { automatic: true } },
-      SVG:        { scale: 100, linebreaks: { automatic: true } },
-      CommonHTML: { scale: 100, linebreaks: { automatic: true } },
-      menuSettings: { inTabOrder: false }
-    });
-    
-    MathJax.Hub.Register.MessageHook("End Process", function () {
-      document.querySelectorAll('.MathJax, .MathJax_CHTML, .mjx-chtml, [id*="MathJax"]')
-        .forEach(function (el) { el.removeAttribute('tabindex'); });
+      menuSettings: { explorer: true },
+      showProcessingMessages: false,
+      messageStyle: "none",
+      skipStartupTypeset: false
     });
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
   
   <!-- Chart.js for visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

@@ -368,8 +368,12 @@ function clearCalculatedViews() {
   destroyChart();
   const results = $('#results-content');
   if (results) results.innerHTML = '';
-  const equation = $('#dynamic-mathml-equation');
+  const equation = $('#dynamic-equation');
+  const solvedEquation = $('#dynamic-solved-equation');
   if (equation) equation.innerHTML = '';
+  if (solvedEquation) solvedEquation.innerHTML = '';
+  const summary = $('#equation-summary');
+  if (summary) summary.textContent = '';
   const table = $('#cash-flow-table');
   if (table) table.innerHTML = '';
 }

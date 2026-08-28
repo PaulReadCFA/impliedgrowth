@@ -9,7 +9,7 @@
  * - Green #07514F: Growth Rates (g)
  */
 
-import { formatCurrency, formatPercentage } from './utils.js';
+import { formatCurrency, formatCurrencySpeech, formatPercentage } from './utils.js';
 import { getChartTypography, fillTightParenVar } from '../chart-typography.js';
 
 /** Curriculum chart label convention: 13px / 600 / Lato at the 18px design root. */
@@ -585,9 +585,9 @@ function announceDataPoint(cashFlow, total, growthRate) {
   
   const announcement = `Year ${cashFlow.year}. ` +
     `Growth rate (g): ${growthRate ? formatPercentage(growthRate) : '0%'}. ` +
-    `${investmentLabel}: ${formatCurrency(cashFlow.investment, true)}. ` +
-    `Dividend (Div\u209C): ${formatCurrency(cashFlow.dividend, true)}. ` +
-    `Total: ${formatCurrency(total, true)}.`;
+    `${investmentLabel}: ${formatCurrencySpeech(cashFlow.investment)}. ` +
+    `Dividend (Div\u209C): ${formatCurrencySpeech(cashFlow.dividend)}. ` +
+    `Total: ${formatCurrencySpeech(total)}.`;
   
   liveRegion.textContent = announcement;
 }
