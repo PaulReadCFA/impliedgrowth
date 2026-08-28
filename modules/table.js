@@ -3,7 +3,8 @@
  * Renders accessible data table for dividend growth projections
  */
 
-import { $, formatNumber, formatPercentage, announceToScreenReader, applyTableRoles } from './utils.js';
+import { $, formatNumber, formatPercentage, announceToScreenReader } from './utils.js';
+import { applyTableRoles } from '../table-roles.js';
 
 /**
  * Render cash flow table
